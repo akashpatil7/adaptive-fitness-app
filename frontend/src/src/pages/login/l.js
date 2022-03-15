@@ -5,7 +5,6 @@ import fire from "../../api/commonFirebase";
 import { withRouter } from 'react-router-dom';
 import memoryUtils from "../../utils/memoryUtils";
 import storageUtils from "../../utils/storageUtils";
-import forgetPassword from "./forgetpassword";
 class  Demo extends Component{
     state = { visible: false };
      layout = {
@@ -57,7 +56,7 @@ class  Demo extends Component{
              //Persistent login
              memoryUtils.user = e //Store the username in memory
              storageUtils.saveUser(e)//store local
-             message.success("success!"+e.username );
+             message.success("Success!"+e.username );
              this.props.history.replace('/personal');
              fire.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
                  // Send token to your backend via HTTPS
@@ -174,7 +173,7 @@ class  Demo extends Component{
 
                 <Form.Item {...this.tailLayout}>
                     <Button type="primary" htmlType="submit">
-                        Submit
+                        Login
                     </Button>
                     <DrawerForm/>
                     <Button onClick={this.showConfirm} type="dashed">forget password</Button>

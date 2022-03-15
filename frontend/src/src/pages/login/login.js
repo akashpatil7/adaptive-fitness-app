@@ -6,7 +6,7 @@ import React,{Component,Option} from "react";
 import {Link, Redirect} from "react-router-dom";
 import 'antd/dist/antd.css';
 import { message} from 'antd';
-import loginjpg from './images/login1.jpg'
+import loginjpg from './images/login5.jpg'
 import Demo from './l'
 import memoryUtils from "../../utils/memoryUtils";
 import '../login/loginstyle.css'
