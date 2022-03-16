@@ -102,9 +102,9 @@ export default class PersonalInformation extends Component{
                     </Descriptions.Item>
                 </Descriptions>
                 <DrawerForm/>
-                <Button className="site-button-ghost-wrapper"  danger onClick={showDeleteConfirm} type="dashed">
-                    Delete the account
-                </Button>
+                {/*<Button className="site-button-ghost-wrapper"  danger onClick={showDeleteConfirm} type="dashed">*/}
+                {/*    Delete the account*/}
+                {/*</Button>*/}
             </div>
 
         )
