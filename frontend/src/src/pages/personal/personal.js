@@ -163,7 +163,7 @@ const { SubMenu } = Menu;
                         </div>
 
                     </Content>
-                    <Footer style={{ textAlign: 'center' }}>CS385 Team Chromium Copyright © 2020</Footer>
+                    <Footer style={{ textAlign: 'center' }}>Adaptive Applications - Team Blackbird © 2022</Footer>
                 </Layout>
             </Layout>
         )

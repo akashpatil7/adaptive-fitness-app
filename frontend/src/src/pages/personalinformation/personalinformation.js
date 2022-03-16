@@ -14,30 +14,8 @@ export default class PersonalInformation extends Component{
         list: {},
     };
     componentDidMount() {
-        this.queryInformation();
+        //this.queryInformation();
     }
-
-    /**
-     * @function：queryInformation
-     * @parameter：null
-     * @description： The query data is displayed via Firbase
-     */
-    queryInformation () {
-        var user = memoryUtils.user.username.split(".")[0];
-        console.log(user)
-        //query userinformation data
-        var ref = fire.database().ref("userinformation/" + user);
-        var value;
-        //get userinformation data
-        ref.once("value", (data) => {
-            value = data.val();
-            console.log(value)
-
-            this.setState({list: value}, () => {
-                console.log(this.state.list.telephone);
-            })
-        });
-    };
     render() {
         /**
          * @function：showDeleteConfirm
@@ -102,25 +80,25 @@ export default class PersonalInformation extends Component{
                 <Divider />
                 <Descriptions title=" &nbsp;  &nbsp; &nbsp;User Info" bordered>
                     <Descriptions.Item label="UserName">{user.username}</Descriptions.Item>
-                    <Descriptions.Item label="Advice">{this.state.list.bmistring}</Descriptions.Item>
+                    <Descriptions.Item label="Height(cm)">{"height_value"}</Descriptions.Item>
 
-                    <Descriptions.Item label="BMR">{this.state.list.bmr}</Descriptions.Item>
-                    <Descriptions.Item label="daily Kcal">{this.state.list.dailycalories} Kcal</Descriptions.Item>
-                    <Descriptions.Item label="BMI">{this.state.list.bmi}</Descriptions.Item>
+                    <Descriptions.Item label="Weight(kg)">{"weight_value"}</Descriptions.Item>
+                    <Descriptions.Item label="Weight Goal(Kg)">{"weight_goal_value"} Kcal</Descriptions.Item>
+                    <Descriptions.Item label="Age">{"age_value"}</Descriptions.Item>
+                    <Descriptions.Item label="Gender">{"gender_value"}</Descriptions.Item>
 
-                    <Descriptions.Item label="Address" span={2}>
+                    <Descriptions.Item label="Dietary Restrictions" span={2}>
                         {this.state.list.address}
                     </Descriptions.Item>
                     <Descriptions.Item label="Status" span={3}>
                         <Badge status="processing" text="online" />
                     </Descriptions.Item>
-                    <Descriptions.Item label="Gender">{this.state.list.gender}</Descriptions.Item>
-                    <Descriptions.Item label="Age">{this.state.list.age}</Descriptions.Item>
-                    <Descriptions.Item label="Height">{this.state.list.height}</Descriptions.Item>
-                    <Descriptions.Item label="Weight">{this.state.list.weight}</Descriptions.Item>
-                    <Descriptions.Item label="Telephone">{this.state.list.telephone}</Descriptions.Item>
-                    <Descriptions.Item label=" Introduction">
-                        {this.state.list.introduction}
+                    <Descriptions.Item label="Activity Level">{"activity_level_value"}</Descriptions.Item>
+                    <Descriptions.Item label="Weight Training Level">{"weight_training_level"}</Descriptions.Item>
+                    <Descriptions.Item label="Height">{""}</Descriptions.Item>
+
+                    <Descriptions.Item label="Extras">
+                        {"extras_value"}
                     </Descriptions.Item>
                 </Descriptions>
                 <DrawerForm/>

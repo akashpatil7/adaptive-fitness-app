@@ -4,8 +4,9 @@ import {Form, Input, Button, message, InputNumber,Radio} from "antd";
 import React,{Component} from "react";
 class  RegistrationForm extends Component{
     state = {
-        ratio:1.2,
+        weight_training_level_ratio:0,
         gender:'male',
+        activity_level_ratio:0,
     }
      formItemLayout = {
         labelCol: {
@@ -44,21 +45,6 @@ class  RegistrationForm extends Component{
      * @description： Calculate BMI, BMR and so on and store them in the database
      */
      onFinish = (v) => {
-         v.gender = this.state.gender
-         v.frequency = this.state.ratio
-         //Calculate BMI
-         v.bmi = v.weight / ((v.height / 100.0)*(v.height / 100.0)) ;
-         //Calculate BMR by sex
-         if(v.gender == 'male') {
-             //Male BMR algorithm calculation
-             v.bmr = 10*v.weight+6.25*v.height-5*v.age+5
-             v.dailycalories = v.bmr*v.frequency
-         }else {
-             //Female algorithm is calculation
-             v.bmr = 10*v.weight+6.25*v.height-5*v.age-161
-             v.dailycalories = v.bmr*v.frequency
-         }
-         v.bmistring = this.GetBmitostring(v.bmi);
          console.log(v)
          //send create user request
         fire.auth().createUserWithEmailAndPassword(v.email,v.password).then((u)=>{
@@ -82,25 +68,28 @@ class  RegistrationForm extends Component{
             message.error(error.message);
         });
     };
-    /**
-     * @function：GetBmitostring
-     * @parameter：BMI
-     * @description：Generate the corresponding string based on BMI
-     */
-    GetBmitostring = (fac)=>{
-        var fst = "";
-        if(fac<18.5) fst = "Underweight <18.5 ";
-        if(fac>=18.5 && fac<25) fst = "Normal weight  18.5–24.9";
-        if(fac>=25 && fac<30) fst = "Overweight 25–29.9";
-        if(fac>=30) fst = "Obesity BMI of 30 or greater";
-        return fst.toString();
-    }
-    render() {
-        const handleChange = (value)=> {
 
-            this.setState({ratio:value.target.value})
-            console.log("handleChange:"+this.state.ratio)
+
+    render() {
+
+        /**
+         * @function：weight_training_level_Change
+         * @parameter：Various information about registered users
+         * @description： Parameter Change  weight_training_level
+         */
+        const weight_training_level_Change = (value)=> {
+            this.setState({weight_training_level_ratio:value.target.value})
+            console.log("weight_training_level_Change:"+this.state.weight_training_level_ratio)
+            console.log("Current value:"+value.target.value)
+
         }
+
+        const activity_level_Change = (value)=> {
+            this.setState({activity_level_ratio:value.target.value})
+            console.log("activity_level_Change:"+this.state.activity_level_ratio)
+            console.log("Current value"+value.target.value)
+        }
+
         const genderChange = (value)=> {
             console.log("genderChange:"+value.target.value)
             this.setState({gender:value})
@@ -242,21 +231,21 @@ class  RegistrationForm extends Component{
                     </Radio.Group>
                 </Form.Item>
 
-                <Form.Item name={'activity_level'} label="Activity Level" rules={[{ required: true}]}>
-                    <Radio.Group onChange={handleChange} >
-                        <Radio value={0}>Sedentary</Radio>
-                        <Radio value={1}>Lightly Active</Radio>
-                        <Radio value={2}>Moderately Active</Radio>
-                        <Radio value={3}>Very Active</Radio>
+                <Form.Item name={'activity_level'} label="Activity Level" rules={[{ required: true,message: "Please input your activity level !"}]}>
+                    <Radio.Group onChange={activity_level_Change} >
+                        <Radio value={"Sedentary"}>Sedentary</Radio>
+                        <Radio value={"Lightly"}>Lightly Active</Radio>
+                        <Radio value={"Moderately"}>Moderately Active</Radio>
+                        <Radio value={"Very"}>Very Active</Radio>
                     </Radio.Group>
                 </Form.Item>
 
 
-                <Form.Item name={'weight_training_level'} label="Weight Training Level" rules={[{ required: true}]}>
-                    <Radio.Group onChange={handleChange} >
-                        <Radio value={0}>Beginner (0-1 years)</Radio>
-                        <Radio value={1}>Intermediate (2-4 years)</Radio>
-                        <Radio value={2}>Advanced (4+ years)</Radio>
+                <Form.Item name={'weight_training_level'} label="Weight Training Level" rules={[{ required: true,message: "Please input your weight training level !"}]}>
+                    <Radio.Group onChange={weight_training_level_Change} >
+                        <Radio value={"Beginner"}>Beginner (0-1 years)</Radio>
+                        <Radio value={"Intermediate"}>Intermediate (2-4 years)</Radio>
+                        <Radio value={"Advanced"}>Advanced (4+ years)</Radio>
                     </Radio.Group>
                 </Form.Item>
 

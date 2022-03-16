@@ -61,7 +61,7 @@ class  Demo extends Component{
              fire.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
                  // Send token to your backend via HTTPS
                  // ...
-                 message.success("success get JWT!"+idToken);
+                console.log("success get JWT!"+idToken);
              }).catch(function(error) {
                  // Handle error
              });
