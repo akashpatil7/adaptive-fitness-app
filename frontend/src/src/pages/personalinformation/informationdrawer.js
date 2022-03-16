@@ -86,11 +86,11 @@ export  default  class DrawerForm extends React.Component {
         };
         const activity_level_change = (value)=> {
             this.setState({activity_level_ratio:value.target.value})
-            console.log("handleChange:"+this.state.ratio)
+            console.log("activity_level:"+this.state.ratio)
         }
         const weight_training_level_change = (value)=> {
             this.setState({weight_training_level_ratio:value.target.value})
-            console.log("handleChange:"+this.state.ratio)
+            console.log("weight_training_level:"+this.state.ratio)
         }
 
         return (

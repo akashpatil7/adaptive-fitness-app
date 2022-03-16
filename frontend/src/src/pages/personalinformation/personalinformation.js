@@ -95,7 +95,6 @@ export default class PersonalInformation extends Component{
                     </Descriptions.Item>
                     <Descriptions.Item label="Activity Level">{"activity_level_value"}</Descriptions.Item>
                     <Descriptions.Item label="Weight Training Level">{"weight_training_level"}</Descriptions.Item>
-                    <Descriptions.Item label="Height">{""}</Descriptions.Item>
 
                     <Descriptions.Item label="Extras">
                         {"extras_value"}
