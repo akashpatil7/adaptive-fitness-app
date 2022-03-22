@@ -5,6 +5,7 @@ import fire from "../../api/commonFirebase";
 import { withRouter } from 'react-router-dom';
 import memoryUtils from "../../utils/memoryUtils";
 import storageUtils from "../../utils/storageUtils";
+import axios from "axios";
 class  Demo extends Component{
     state = { visible: false };
      layout = {
@@ -36,6 +37,9 @@ class  Demo extends Component{
      * @description： Forget passwords via the Firebase API
      */
     onFinishforget = (v) => {
+
+
+
         //send email
         fire.auth().sendPasswordResetEmail(v.email).then((u)=>{
             message.success(v.email+" A 'Reset Password Email' has been sent to your email address")
@@ -43,7 +47,14 @@ class  Demo extends Component{
             message.error(error.message);
         });
     };
-
+    postJWT=(token)=>{
+        let data = new FormData();
+        data.append('token',token);
+        axios.post(`/token`,data)
+            .then(res=>{
+                console.log('token res=>',res.data);
+            })
+    }
     /**
      * @function：onFinish
      * @parameter： User account email and password
@@ -51,6 +62,7 @@ class  Demo extends Component{
      */
      onFinish = (e) => {
          withRouter(Demo)
+
          //Authentication request
          fire.auth().signInWithEmailAndPassword(e.username,e.password).then((u)=>{
              //Persistent login
@@ -61,7 +73,9 @@ class  Demo extends Component{
              fire.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
                  // Send token to your backend via HTTPS
                  // ...
+                 this.postJWT(idToken)
                 console.log("success get JWT!"+idToken);
+
              }).catch(function(error) {
                  // Handle error
              });

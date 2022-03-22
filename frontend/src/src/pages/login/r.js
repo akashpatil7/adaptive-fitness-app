@@ -1,12 +1,20 @@
 import fire from "../../api/commonFirebase";
 import "antd/dist/antd.css";
-import {Form, Input, Button, message, InputNumber,Radio} from "antd";
+import {Form, Input, Button, message, InputNumber,Radio,Select} from "antd";
 import React,{Component} from "react";
+import axios from 'axios'
+const { Option } = Select;
+
+
+
 class  RegistrationForm extends Component{
     state = {
-        weight_training_level_ratio:0,
+        experience:'1 month',
         gender:'male',
         activity_level_ratio:0,
+        dietary_restrictions:'no',
+        gym_equipment: ['no'],
+        weight_goals:'weight gain',
     }
      formItemLayout = {
         labelCol: {
@@ -39,6 +47,7 @@ class  RegistrationForm extends Component{
         }
     };
 
+
     /**
      * @function：onFinish
      * @parameter：Various information about registered users
@@ -46,24 +55,29 @@ class  RegistrationForm extends Component{
      */
      onFinish = (v) => {
          console.log(v)
-         //send create user request
+         let data = new FormData();
+         data.append('experience',v.experience);
+         data.append('gender',v.gender);
+         data.append('activity_level_ratio',v.activity_level_ratio);
+         data.append('dietary_restrictions',v.dietary_restrictions);
+         data.append('gym_equipment',v.gym_equipment);
+         data.append('weight_goals',v.weight_goals);
+         data.append('age',v.age);
+         data.append('height',v.height);
+         data.append('weight',v.weight);
+
+         console.log(JSON.stringify(data))
+         //send create user requestsddasd
         fire.auth().createUserWithEmailAndPassword(v.email,v.password).then((u)=>{
             var user =v.email.split(".")[0];
-            fire.database().ref('userinformation/' + user).set({
-                address:'null',
-                age: v.age,
-                weight:v.weight,
-                height:v.height,
-                introduction:'null',
-                gender:v.gender,
-                telephone:'null',
-                bmi:v.bmi,
-                bmistring:v.bmistring,
-                frequency:v.frequency,
-                dailycalories:v.dailycalories,
-                bmr:v.bmr
-            });
             message.success(v.email+" Create success!")
+
+            //send post
+
+
+
+
+
         }).catch((error)=>{
             message.error(error.message);
         });
@@ -71,28 +85,42 @@ class  RegistrationForm extends Component{
 
 
     render() {
+        const dietary_restrictions = (value)=>{
+            this.setState({dietary_restrictions:value})
+            console.log(`dietary selected ${this.state.dietary_restrictions}`);
+        }
+
+        const gym_equipment = (value)=>{
+            this.setState({gym_equipment:value})
+            console.log(`Gym Equipment ${this.state.gym_equipment}`);
+        }
 
         /**
          * @function：weight_training_level_Change
          * @parameter：Various information about registered users
          * @description： Parameter Change  weight_training_level
          */
-        const weight_training_level_Change = (value)=> {
-            this.setState({weight_training_level_ratio:value.target.value})
-            console.log("weight_training_level_Change:"+this.state.weight_training_level_ratio)
-            console.log("Current value:"+value.target.value)
+        const experience = (value)=> {
+            this.setState({experience:value})
+            console.log("experience:"+this.state.experience)
 
         }
 
         const activity_level_Change = (value)=> {
-            this.setState({activity_level_ratio:value.target.value})
+            this.setState({activity_level_ratio:value.value})
             console.log("activity_level_Change:"+this.state.activity_level_ratio)
-            console.log("Current value"+value.target.value)
         }
 
         const genderChange = (value)=> {
             console.log("genderChange:"+value.target.value)
             this.setState({gender:value})
+        }
+
+        const weight_goals = (value)=> {
+
+            this.setState({weight_goals:value.target.value})
+
+            console.log("Weight Goals:"+this.state.weight_goals)
         }
         return(
             <Form
@@ -186,26 +214,19 @@ class  RegistrationForm extends Component{
                     rules={[
                         {
                             required: true,
-                            message: "Please input your correct weight!",
-                            min:20
+                            message: "Please input your weight!",
                         }
                     ]}
                 >
                     <InputNumber/>
                 </Form.Item>
 
-                <Form.Item
-                    name="Weight_goal"
-                    label="Weight Goal(Kg)"
-
-                    rules={[
-                        {
-                            required: true,
-                            message: "Please input your correct weight Goal!",
-                            min:20
-                        }
-                    ]}>
-                    <InputNumber/>
+                <Form.Item name={'weight_goals'} label="Weight Goals" initialValue={"weight gain"}>
+                    <Radio.Group onChange={weight_goals} defaultValue={'weight gain'}>
+                        <Radio value={'weight gain'}>Weight gain</Radio>
+                        <Radio value={'weight loss'}>Weight loss</Radio>
+                        <Radio value={'weight maintain'}>Weight maintain</Radio>
+                    </Radio.Group>
                 </Form.Item>
 
 
@@ -214,40 +235,95 @@ class  RegistrationForm extends Component{
                 </Form.Item>
 
 
-                <Form.Item
-                    name="dietary_restrictions"
-                    label="Dietary Restrictions"
-                    initialValue="None"
 
+                <Form.Item name={'gender'} label="Gender" initialValue={"male"}>
+                    <Radio.Group onChange={genderChange} defaultValue={'male'}>
+                        <Radio value={'male'}>Male</Radio>
+                        <Radio value={'female'}>Female</Radio>
+                    </Radio.Group>
+                </Form.Item>
+
+                <Form.Item name={'dietary_restrictions'} label='Dietary Restrictions' initialValue={"no"}>
+                    <Select defaultValue="no" style={{ width: 150 }} onChange={dietary_restrictions}>
+                        <Option value="no">No restrictions</Option>
+                        <Option value="vegetarian">Vegetarian</Option>
+                        <Option value="vegan">Vegan</Option>
+                        <Option value="gluten-free">Gluten-free</Option>
+                        <Option value="dairy-free">Dairy-free</Option>
+                    </Select>
+                </Form.Item>
+
+            <Form.Item name={'gym_equipment'} label='Gym Equipment' initialValue={['no']}>
+                <Select
+                    mode="multiple"
+                    style={{ width: '100%' }}
+                    placeholder="select one country"
+                    defaultValue={['no']}
+                    onChange={gym_equipment}
+                    optionLabelProp="label"
+                    value={this.state.gym_equipment}
                 >
-                    <input/>
+
+                    <Option value="no" label="No equipment">
+                        <div className="no_equipment">
+                            No equipment
+                        </div>
+                    </Option>
+
+                    <Option value="dumbbells" label="Dumbbells">
+                        <div className="dumbbells">
+                            Dumbbells
+                        </div>
+                    </Option>
+
+                    <Option value="yoga mat" label="Yoga Mat">
+                        <div className="yoga_mat">
+                            Yoga Mat
+                        </div>
+                    </Option>
+
+                    <Option value="resistance bands" label="Resistance Bands">
+                        <div className="resistance_bands">
+                            Resistance Bands
+                        </div>
+                    </Option>
+
+                    <Option value="pull-up bar" label="Pull-up Bar">
+                        <div className="pull_up_bar">
+                            Pull-up Bar
+                        </div>
+                    </Option>
+
+                    <Option value="machines" label="Machines">
+                        <div className="machines">
+                            Machines
+                        </div>
+                    </Option>
+                </Select>
+            </Form.Item>
+
+
+
+
+                <Form.Item name={'activity_level'} label='Activity Level' initialValue={'sedentary'}>
+                    <Select defaultValue="sedentary" style={{ width: 150 }} onChange={activity_level_Change} value={this.state.activity_level_ratio}>
+                        <Option value={"sedentary"}>Sedentary</Option>
+                        <Option value={"lightly"}>Lightly active</Option>
+                        <Option value={"moderately"}>Moderately active</Option>
+                        <Option value={"very"}>Very active</Option>
+                    </Select>
                 </Form.Item>
 
 
-                <Form.Item name={'gender'} label="Gender">
-                    <Radio.Group onChange={genderChange} defaultValue={'male'} value={this.state.gender}>
-                        <Radio value={'male'}>male</Radio>
-                        <Radio value={'female'}>female</Radio>
-                    </Radio.Group>
+                <Form.Item name={'experience'} label='Experience' initialValue={'1 month'}>
+                    <Select defaultValue="1 month" style={{ width: 150 }} onChange={experience}>
+                        <Option value={"1 month"}>1 month</Option>
+                        <Option value={"6 months"}>6 months</Option>
+                        <Option value={"1 year"}>1 year</Option>
+                        <Option value={"2 year"}>2 years</Option>
+                    </Select>
                 </Form.Item>
 
-                <Form.Item name={'activity_level'} label="Activity Level" rules={[{ required: true,message: "Please input your activity level !"}]}>
-                    <Radio.Group onChange={activity_level_Change} >
-                        <Radio value={"Sedentary"}>Sedentary</Radio>
-                        <Radio value={"Lightly"}>Lightly Active</Radio>
-                        <Radio value={"Moderately"}>Moderately Active</Radio>
-                        <Radio value={"Very"}>Very Active</Radio>
-                    </Radio.Group>
-                </Form.Item>
-
-
-                <Form.Item name={'weight_training_level'} label="Weight Training Level" rules={[{ required: true,message: "Please input your weight training level !"}]}>
-                    <Radio.Group onChange={weight_training_level_Change} >
-                        <Radio value={"Beginner"}>Beginner (0-1 years)</Radio>
-                        <Radio value={"Intermediate"}>Intermediate (2-4 years)</Radio>
-                        <Radio value={"Advanced"}>Advanced (4+ years)</Radio>
-                    </Radio.Group>
-                </Form.Item>
 
                 <Form.Item {...this.tailFormItemLayout}>
                     <Button type="primary" htmlType="submit">
