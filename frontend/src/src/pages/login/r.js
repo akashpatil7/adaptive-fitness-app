@@ -51,7 +51,7 @@ class  RegistrationForm extends Component{
     /**
      * @function：onFinish
      * @parameter：Various information about registered users
-     * @description： Calculate BMI, BMR and so on and store them in the database
+     * @description：
      */
      onFinish = (v) => {
          console.log(v)
