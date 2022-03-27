@@ -56,6 +56,7 @@ class  RegistrationForm extends Component{
      onFinish = (v) => {
          console.log(v)
          let data = new FormData();
+         data.append('email',v.email)
          data.append('experience',v.experience);
          data.append('gender',v.gender);
          data.append('activity_level_ratio',v.activity_level_ratio);
@@ -71,7 +72,6 @@ class  RegistrationForm extends Component{
         fire.auth().createUserWithEmailAndPassword(v.email,v.password).then((u)=>{
             var user =v.email.split(".")[0];
             message.success(v.email+" Create success!")
-
             //send post
 
 

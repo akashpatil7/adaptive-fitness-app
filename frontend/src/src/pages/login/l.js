@@ -37,9 +37,6 @@ class  Demo extends Component{
      * @description： Forget passwords via the Firebase API
      */
     onFinishforget = (v) => {
-
-
-
         //send email
         fire.auth().sendPasswordResetEmail(v.email).then((u)=>{
             message.success(v.email+" A 'Reset Password Email' has been sent to your email address")
