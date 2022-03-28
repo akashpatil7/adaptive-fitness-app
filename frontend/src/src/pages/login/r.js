@@ -1,9 +1,8 @@
-import fire from "../../api/commonFirebase";
 import "antd/dist/antd.css";
 import {Form, Input, Button, message, InputNumber,Radio,Select} from "antd";
 import React,{Component} from "react";
 import '../../api'
-import {reqRegister} from "../../api";
+import {register} from "../../api/firebaseApi";
 const { Option } = Select;
 
 
@@ -54,32 +53,23 @@ class  RegistrationForm extends Component{
      * @parameter：Various information about registered users
      * @description：
      */
-     onFinish = (v) => {
+     onFinish = async (v) => {
          console.log(v)
          let data = new FormData();
-         data.append('email',v.email)
-         data.append('experience',v.experience);
-         data.append('gender',v.gender);
-         data.append('activity_level_ratio',v.activity_level_ratio);
-         data.append('dietary_restrictions',v.dietary_restrictions);
-         data.append('gym_equipment',v.gym_equipment);
-         data.append('weight_goals',v.weight_goals);
-         data.append('age',v.age);
-         data.append('height',v.height);
-         data.append('weight',v.weight);
+         data.append('email', v.email)
+         data.append('experience', v.experience);
+         data.append('gender', v.gender);
+         data.append('activity_level_ratio', v.activity_level_ratio);
+         data.append('dietary_restrictions', v.dietary_restrictions);
+         data.append('gym_equipment', v.gym_equipment);
+         data.append('weight_goals', v.weight_goals);
+         data.append('age', v.age);
+         data.append('height', v.height);
+         data.append('weight', v.weight);
 
          console.log(JSON.stringify(v))
-         //send create user requestsddasd
-        fire.auth().createUserWithEmailAndPassword(v.email,v.password).then(async (u) => {
-            var user = v.email.split(".")[0];
-            message.success(v.email + " Create success!")
-            //send post
-            const response = await reqRegister(JSON.stringify(v));
-
-        }).catch((error)=>{
-            message.error(error.message);
-        });
-    };
+         await register(v.email, v.password, v)
+     };
 
 
     render() {

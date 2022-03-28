@@ -54,8 +54,12 @@ class  Demo extends Component{
      onFinish = async (e) => {
          withRouter(Demo)
          //Authentication request
-         await authenticationSign(e.username, e.password)
-         this.props.history.replace('/personal');
+         var boole = await authenticationSign(e.username, e.password)
+         if(boole)
+         {
+             this.props.history.replace('/personal');
+         }
+
      };
     showModal = () => {
         this.setState({

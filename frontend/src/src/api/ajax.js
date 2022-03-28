@@ -33,5 +33,3 @@ export default function ajax(url,data={},type='GET'){
     })
 }
 
-//POST Registration data
-ajax('/registration',"data","POST").then()
