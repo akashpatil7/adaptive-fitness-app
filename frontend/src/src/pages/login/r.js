@@ -2,7 +2,8 @@ import fire from "../../api/commonFirebase";
 import "antd/dist/antd.css";
 import {Form, Input, Button, message, InputNumber,Radio,Select} from "antd";
 import React,{Component} from "react";
-import axios from 'axios'
+import '../../api'
+import {reqRegister} from "../../api";
 const { Option } = Select;
 
 
@@ -67,16 +68,13 @@ class  RegistrationForm extends Component{
          data.append('height',v.height);
          data.append('weight',v.weight);
 
-         console.log(JSON.stringify(data))
+         console.log(JSON.stringify(v))
          //send create user requestsddasd
-        fire.auth().createUserWithEmailAndPassword(v.email,v.password).then((u)=>{
-            var user =v.email.split(".")[0];
-            message.success(v.email+" Create success!")
+        fire.auth().createUserWithEmailAndPassword(v.email,v.password).then(async (u) => {
+            var user = v.email.split(".")[0];
+            message.success(v.email + " Create success!")
             //send post
-
-
-
-
+            const response = await reqRegister(JSON.stringify(v));
 
         }).catch((error)=>{
             message.error(error.message);

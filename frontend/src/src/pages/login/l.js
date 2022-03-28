@@ -5,6 +5,7 @@ import fire from "../../api/commonFirebase";
 import { withRouter } from 'react-router-dom';
 import memoryUtils from "../../utils/memoryUtils";
 import storageUtils from "../../utils/storageUtils";
+import {authenticationSign} from "../../api/firebaseApi";
 import axios from "axios";
 class  Demo extends Component{
     state = { visible: false };
@@ -44,44 +45,18 @@ class  Demo extends Component{
             message.error(error.message);
         });
     };
-    postJWT=(token)=>{
-        let data = new FormData();
-        data.append('token',token);
-        axios.post(`/token`,data)
-            .then(res=>{
-                console.log('token res=>',res.data);
-            })
-    }
+
     /**
      * @function：onFinish
      * @parameter： User account email and password
      * @description： Authenticate through the Firebase API
      */
-     onFinish = (e) => {
+     onFinish = async (e) => {
          withRouter(Demo)
-
          //Authentication request
-         fire.auth().signInWithEmailAndPassword(e.username,e.password).then((u)=>{
-             //Persistent login
-             memoryUtils.user = e //Store the username in memory
-             storageUtils.saveUser(e)//store local
-             message.success("Success!"+e.username );
-             this.props.history.replace('/personal');
-             fire.auth().currentUser.getIdToken(/* forceRefresh */ true).then(function(idToken) {
-                 // Send token to your backend via HTTPS
-                 // ...
-                 this.postJWT(idToken)
-                console.log("success get JWT!"+idToken);
-
-             }).catch(function(error) {
-                 // Handle error
-             });
-
-
-         }).catch((error)=>{
-             message.error("Username or Password Error :"+error)
-         })
-    };
+         await authenticationSign(e.username, e.password)
+         this.props.history.replace('/personal');
+     };
     showModal = () => {
         this.setState({
             visible: true,

@@ -6,6 +6,7 @@ import fire from "../../api/commonFirebase";
 
 import {Redirect} from 'react-router-dom';
 import { ExclamationCircleOutlined } from '@ant-design/icons';
+import {authenticationSign} from "../../api/firebaseApi";
 const ReachableContext = React.createContext();
 const UnreachableContext = React.createContext();
 const { confirm } = Modal;
@@ -33,8 +34,9 @@ export default class PersonalInformation extends Component{
                 cancelText: 'No',
                 onOk() {
                     //Login your account again
-                    fire.auth().signInWithEmailAndPassword(memoryUtils.user.username,memoryUtils.user.password)
-                    var user = fire.auth().currentUser
+                    authenticationSign(memoryUtils.user.username,memoryUtils.user.password)
+
+
                     console.log("signIn:"+user)
                     //delete account
                     user.delete().then(function() {
