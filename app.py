@@ -59,8 +59,8 @@ def getInitialWorkoutPlansForUser(data):
     exercises = {}
     
     # for each exercise, check that the user has the right equipment. If not, repeat for lower level exercises
+    print("\nAll exercises for user level:")
     for key, value in exercises_for_user_level.items():
-        print("All exercises for user level:")
         print(key, ' : ', value['EquipmentNeeded'])
         exercise_names = []
         # append body part exercises for user if the user has the equipment
@@ -77,7 +77,7 @@ def getInitialWorkoutPlansForUser(data):
     for key, value in exercises.items():
         print(key, ' : ', value)
         
-    return exercises_for_user_level
+    return exercises
 
 
 # Recursive function to get exercises according to level and equipment     
