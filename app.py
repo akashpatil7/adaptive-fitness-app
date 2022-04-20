@@ -78,7 +78,7 @@ def getInitialWorkoutPlansForUser(data):
         exercises[key]["Name"] = exercise_names
         # if user has no equipment for that body part, repeat with lower level exercise for body part
         if len(exercises[key]["Name"]) == 0:
-            exercises[key]["Name"], exercises[key]["Reps"], exercises[key]["Sets"], exercises[key]["Weight"] = getLowerLevelExercise(key, all_levels, experience_level -1, user_equipment, exercise_reps, exercise_sets, exercise_weight)
+            exercises[key]["Name"], exercises[key]["Reps"], exercises[key]["Sets"], exercises[key]["Weight"] = getLowerLevelExercise(key, all_levels, experience_level -1, user_equipment, exercise_names, exercise_reps, exercise_sets, exercise_weight)
         else:
             exercises[key]["Reps"] = exercise_reps
             exercises[key]["Sets"] = exercise_sets
@@ -92,15 +92,14 @@ def getInitialWorkoutPlansForUser(data):
 
 
 # Recursive function to get exercises according to level and equipment     
-def getLowerLevelExercise(body_part, all_levels, new_level, user_equipment, exercise_reps, exercise_sets, exercise_weight):
+def getLowerLevelExercise(body_part, all_levels, new_level, user_equipment, exercise_names, exercise_reps, exercise_sets, exercise_weight):
     if new_level < 0:
-        return []
+        return [], [], [], []
         
     if new_level >= 0:
         # get lower level
         lower_level = all_levels[new_level]
 
-        exercise_names = []
         # append exercises for given body part if the user has the equipment
         for i in range(len(lower_level[body_part]['EquipmentNeeded'])):
             if lower_level[body_part]['EquipmentNeeded'][i] in user_equipment or lower_level[body_part]['EquipmentNeeded'][i] == "NA":
@@ -111,7 +110,7 @@ def getLowerLevelExercise(body_part, all_levels, new_level, user_equipment, exer
                 
         # if user has no equipment for that body part, repeat with lower level exercise for body part        
         if len(exercise_names) == 0:
-            getLowerLevelExercise(body_part, all_levels, new_level -1, user_equipment, exercise_reps, exercise_sets, exercise_weight)
+            getLowerLevelExercise(body_part, all_levels, new_level -1, user_equipment, exercise_names, exercise_reps, exercise_sets, exercise_weight)
     return exercise_names, exercise_reps, exercise_sets, exercise_weight
 
 
