@@ -78,7 +78,7 @@ def getInitialWorkoutPlansForUser(data):
         exercises[key]["Name"] = exercise_names
         # if user has no equipment for that body part, repeat with lower level exercise for body part
         if len(exercises[key]["Name"]) == 0:
-            exercises[key]["Name"] = getLowerLevelExercise(key, all_levels, experience_level -1, user_equipment, exercise_reps, exercise_sets, exercise_weight)
+            exercises[key]["Name"], exercises[key]["Reps"], exercises[key]["Sets"], exercises[key]["Weight"] = getLowerLevelExercise(key, all_levels, experience_level -1, user_equipment, exercise_reps, exercise_sets, exercise_weight)
         else:
             exercises[key]["Reps"] = exercise_reps
             exercises[key]["Sets"] = exercise_sets
@@ -88,8 +88,7 @@ def getInitialWorkoutPlansForUser(data):
     for key, value in exercises.items():
         print(key, ' : ', value)
         
-    #return exercises
-    return exercises_for_user_level
+    return exercises
 
 
 # Recursive function to get exercises according to level and equipment     
