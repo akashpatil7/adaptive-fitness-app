@@ -41,25 +41,18 @@ def enterQuestionaireForm():
 
 #Get initial workout plans for user 
 def getInitialWorkoutPlansForUser(data):
-    gymEquipment = data['gym_equipment']
-    experience = data['experience']
+    gym_equipment = data['gym_equipment']
+    experience_level = data['experience']
     gender = data['gender']
     age = data['age']
     height = data['height']
-    weight = data['weight']
-    
-    #stream = exercise_plans_data.stream()
-    
-    #for item in stream:
-    #    print(u'{} => {}'.format(item.id, item.to_dict()))
-    
-    test = exercise_plans_data.get('Level_1').to_dict()
-    print(test)
+    weight = data['weight']    
+
+    all_levels = [doc.to_dict() for doc in exercise_plans_data.stream()]
         
-    all_todos = [doc.to_dict() for doc in exercise_plans_data.stream()]
-    for item in all_todos:
-        print(item['Shoulders'])
-        print("\n")
+    exercises_for_user = all_levels[experience_level]
+    print(exercises_for_user)
+    return exercises_for_user
 
 
 #Update data for user
