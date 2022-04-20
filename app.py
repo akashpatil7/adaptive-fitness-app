@@ -1,6 +1,7 @@
 import firebase_admin
-from flask import Flask, make_response, jsonify
-from flask import json, request
+
+from flask import Flask, make_response
+from flask import json, request, jsonify
 from firebase_admin import credentials, firestore
 
 cred = credentials.Certificate("blackbird-545eb-firebase-adminsdk-mbj63-6dffc14bc3.json")
@@ -26,6 +27,7 @@ def enterQuestionaireForm():
 
     #Get the initial diet and workout plan
     data = getInitialPlansForUser(request_body)
+    #workoutData = getInitialWorkoutPlansForUser(request_body)
 
     response = app.response_class(
         response=json.dumps(data),
@@ -37,6 +39,28 @@ def enterQuestionaireForm():
 #Show workout plans for user
 
 #Show diet plans for user
+
+#Get initial workout plans for user 
+def getInitialWorkoutPlansForUser(data):
+    gymEquipment = data['gym_equipment']
+    experience = data['experience']
+    gender = data['gender']
+    age = data['age']
+    height = data['height']
+    weight = data['weight']
+    
+    #stream = exercise_plans_data.stream()
+    
+    #for item in stream:
+    #    print(u'{} => {}'.format(item.id, item.to_dict()))
+    
+    test = exercise_plans_data.get('Level_1').to_dict()
+    print(test)
+        
+    all_todos = [doc.to_dict() for doc in exercise_plans_data.stream()]
+    for item in all_todos:
+        print(item['Shoulders'])
+        print("\n")
 
 
 #Update data for user
