@@ -8,7 +8,7 @@ firebase_admin.initialize_app(cred)
 
 db = firestore.client()
 explicit_data = db.collection('explicit-info')
-exercise_plans_data = db.collection('exercise')
+exercise_plans_data = db.collection('exercise_plan')
 food_plans_data = db.collection('food_plan')
 
 app = Flask(__name__)
@@ -51,7 +51,24 @@ def getInitialWorkoutPlansForUser(data):
     all_levels = [doc.to_dict() for doc in exercise_plans_data.stream()]
         
     exercises_for_user = all_levels[experience_level]
-    print(exercises_for_user)
+    equipment_needed = []
+    
+    for key, value in exercises_for_user.items():
+        print(key, ' : ', value['EquipmentNeeded'])
+        for equipment in value['EquipmentNeeded']:
+            if(equipment != "NA"):
+                print(equipment)
+                equipment_needed.append(equipment)
+        
+
+    has_all_equipment = all(item in gym_equipment for item in equipment_needed)
+
+    if has_all_equipment:
+        print("Yes, the user has all equipment needed")
+    else:
+        print("No, the user does not have all equipment needed")
+    
+
     return exercises_for_user
 
 
