@@ -63,25 +63,37 @@ def getInitialWorkoutPlansForUser(data):
     for key, value in exercises_for_user_level.items():
         print(key, ' : ', value['EquipmentNeeded'])
         exercise_names = []
+        exercise_reps = []
+        exercise_sets = []
+        exercise_weight = []
         # append body part exercises for user if the user has the equipment
         for i in range(len(value['EquipmentNeeded'])):
             if value['EquipmentNeeded'][i] in user_equipment or value['EquipmentNeeded'][i] == "NA":
                 exercise_names.append(value["ExerciseName"][i])
+                exercise_reps.append(value["StartingReps"][i])
+                exercise_sets.append(value["StartingSets"][i])
+                exercise_weight.append(value["StartingWeight"][i])
                 
-        exercises[key] = exercise_names
+        exercises[key] = {}
+        exercises[key]["Name"] = exercise_names
         # if user has no equipment for that body part, repeat with lower level exercise for body part
-        if len(exercises[key]) == 0:
-            exercises[key] = getLowerLevelExercise(key, all_levels, experience_level -1, user_equipment)
+        if len(exercises[key]["Name"]) == 0:
+            exercises[key]["Name"] = getLowerLevelExercise(key, all_levels, experience_level -1, user_equipment, exercise_reps, exercise_sets, exercise_weight)
+        else:
+            exercises[key]["Reps"] = exercise_reps
+            exercises[key]["Sets"] = exercise_sets
+            exercises[key]["Weight"] = exercise_weight
         
     print("\n\nExercies to return to the user:")
     for key, value in exercises.items():
         print(key, ' : ', value)
         
-    return exercises
+    #return exercises
+    return exercises_for_user_level
 
 
 # Recursive function to get exercises according to level and equipment     
-def getLowerLevelExercise(body_part, all_levels, new_level, user_equipment):
+def getLowerLevelExercise(body_part, all_levels, new_level, user_equipment, exercise_reps, exercise_sets, exercise_weight):
     if new_level < 0:
         return []
         
@@ -94,11 +106,14 @@ def getLowerLevelExercise(body_part, all_levels, new_level, user_equipment):
         for i in range(len(lower_level[body_part]['EquipmentNeeded'])):
             if lower_level[body_part]['EquipmentNeeded'][i] in user_equipment or lower_level[body_part]['EquipmentNeeded'][i] == "NA":
                 exercise_names.append(lower_level[body_part]["ExerciseName"][i])
+                exercise_reps.append(lower_level[body_part]["StartingReps"][i])
+                exercise_sets.append(lower_level[body_part]["StartingSets"][i])
+                exercise_weight.append(lower_level[body_part]["StartingWeight"][i])
                 
         # if user has no equipment for that body part, repeat with lower level exercise for body part        
         if len(exercise_names) == 0:
-            getLowerLevelExercise(body_part, all_levels, new_level -1, user_equipment)
-    return exercise_names
+            getLowerLevelExercise(body_part, all_levels, new_level -1, user_equipment, exercise_reps, exercise_sets, exercise_weight)
+    return exercise_names, exercise_reps, exercise_sets, exercise_weight
 
 
 #Update data for user
