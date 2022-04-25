@@ -1,4 +1,5 @@
 import firebase_admin
+
 from flask import Flask, make_response
 from flask import json, request, jsonify
 from firebase_admin import credentials, firestore
@@ -17,7 +18,7 @@ app = Flask(__name__)
 def hello_world():
     return make_response("Hello world", 200)
 
-@app.route('/explicit', methods=['POST'])
+@app.route('/food/getPlans', methods=['POST'])
 def enterQuestionaireForm():
     id = request.json['email']
 
@@ -25,11 +26,11 @@ def enterQuestionaireForm():
     #explicit_data.document(id).set(request.json)
 
     #Get the initial diet and workout plan
-    #data = getInitialPlansForUser(request_body)
-    workoutData = getInitialWorkoutPlansForUser(request_body)
+    data = getInitialPlansForUser(request_body)
+    #workoutData = getInitialWorkoutPlansForUser(request_body)
 
     response = app.response_class(
-        response=json.dumps(workoutData),
+        response=json.dumps(data),
         status=200,
         mimetype='application/json'
     )
@@ -135,14 +136,16 @@ def getInitialPlansForUser(data):
         bmr = bmr + 1500
 
     weight_goals = data["weight_goals"]
-    plans_by_weight_goals = food_plans_data.document(weight_goals).get().to_dict()
-    plans_by_diet_restrictions = plans_by_weight_goals[data["dietary_restrictions"]]
+    dietary_restriction = data["dietary_restrictions"]
+    plans_ref = food_plans_data.document(weight_goals).collection(dietary_restriction)
+    plans_by_diet_restrictions = [doc.to_dict() for doc in plans_ref.stream()]
+    #plans_by_diet_restrictions = plans_by_weight_goals[data["dietary_restrictions"]]
 
     total_cals_in_plans = 0
-    total_cals_per_meal = {}
+    total_cals_per_meal = dict()
     for meal in plans_by_diet_restrictions:
-        total_cals_in_plans += meal["nutrition"]["cal"]
-        total_cals_per_meal[meal] = meal["nutrition"]["cal"]
+        total_cals_in_plans += int(meal["nutrition"]["cal"])
+        total_cals_per_meal[meal['meal_id']] = int(meal["nutrition"]["cal"])
 
     if bmr < total_cals_in_plans:
         data["current_food_plan"] = plans_by_diet_restrictions
@@ -153,9 +156,11 @@ def getInitialPlansForUser(data):
         new_plan = plans_by_diet_restrictions
         for meal in new_plan:
             for ingredient, val in meal["ingredients"].items():
-                val += val * (extra_calories_needed_per_meal / total_cals_per_meal[meal])
-        data["current_food_plan"] = new_plan
-        explicit_data.document(id).set(data)
+                new_portion = int(val) * (extra_calories_needed_per_meal / total_cals_per_meal[meal['meal_id']])
+                meal["ingredients"][ingredient] = int(val) + new_portion
+                #val += int(val) * (extra_calories_needed_per_meal / total_cals_per_meal[meal['meal_id']])
+        #data["current_food_plan"] = new_plan
+        #explicit_data.document(id).set(data)
         return new_plan
 
 if __name__ == "__main__":
