@@ -35,6 +35,24 @@ def enterQuestionaireForm():
         mimetype='application/json'
     )
     return response
+    
+    
+@app.route('/workouts/getPlans', methods=['POST'])
+def enterWorkoutQuestionaireForm():
+    id = request.json['email']
+
+    request_body = request.json
+    #explicit_data.document(id).set(request.json)
+
+    #Get initial workout plan
+    workoutData = getInitialWorkoutPlansForUser(request_body)
+
+    response = app.response_class(
+        response=json.dumps(data),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
 
 #Show workout plans for user
 
