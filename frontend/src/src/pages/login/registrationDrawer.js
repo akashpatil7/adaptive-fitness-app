@@ -2,7 +2,7 @@ import React from 'react';
 import 'antd/dist/antd.css';
 import { Drawer, Form, Button, Col, Row, Input, Select, DatePicker } from 'antd';
 import { PlusOutlined } from '@ant-design/icons';
-import RegistrationForm from "./r";
+import RegistrationForm from "./registrationProcess";
 const { Option } = Select;
 
 class RegistrationDrawer extends React.Component {
