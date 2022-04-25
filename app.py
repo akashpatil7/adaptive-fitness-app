@@ -35,32 +35,102 @@ def enterQuestionaireForm():
         mimetype='application/json'
     )
     return response
+    
+    
+@app.route('/workouts/getPlans', methods=['POST'])
+def enterWorkoutQuestionaireForm():
+    id = request.json['email']
+
+    request_body = request.json
+    #explicit_data.document(id).set(request.json)
+
+    #Get initial workout plan
+    workoutData = getInitialWorkoutPlansForUser(request_body)
+
+    response = app.response_class(
+        response=json.dumps(data),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
 
 #Show workout plans for user
 
 #Show diet plans for user
 
-#Get initial workout plans for user 
+# Get initial workout plans for user 
 def getInitialWorkoutPlansForUser(data):
-    gymEquipment = data['gym_equipment']
-    experience = data['experience']
+    # get user data
+    user_equipment = data['gym_equipment']
+    experience_level = data['experience']
     gender = data['gender']
     age = data['age']
     height = data['height']
-    weight = data['weight']
-    
-    #stream = exercise_plans_data.stream()
-    
-    #for item in stream:
-    #    print(u'{} => {}'.format(item.id, item.to_dict()))
-    
-    test = exercise_plans_data.get('Level_1').to_dict()
-    print(test)
+    weight = data['weight']    
+
+    # get exercise data from DB
+    all_levels = [doc.to_dict() for doc in exercise_plans_data.stream()]
         
-    all_todos = [doc.to_dict() for doc in exercise_plans_data.stream()]
-    for item in all_todos:
-        print(item['Shoulders'])
-        print("\n")
+    # get all exercises for current user level
+    exercises_for_user_level = all_levels[experience_level]
+
+    # dictionary to store the exercises the user can do
+    exercises = {}
+    
+    # for each exercise, check that the user has the right equipment. If not, repeat for lower level exercises
+    print("\nAll exercises for user level:")
+    for key, value in exercises_for_user_level.items():
+        print(key, ' : ', value['EquipmentNeeded'])
+        exercise_names = []
+        exercise_reps = []
+        exercise_sets = []
+        exercise_weight = []
+        # append body part exercises for user if the user has the equipment
+        for i in range(len(value['EquipmentNeeded'])):
+            if value['EquipmentNeeded'][i] in user_equipment or value['EquipmentNeeded'][i] == "NA":
+                exercise_names.append(value["ExerciseName"][i])
+                exercise_reps.append(value["StartingReps"][i])
+                exercise_sets.append(value["StartingSets"][i])
+                exercise_weight.append(value["StartingWeight"][i])
+                
+        exercises[key] = {}
+        exercises[key]["Name"] = exercise_names
+        # if user has no equipment for that body part, repeat with lower level exercise for body part
+        if len(exercises[key]["Name"]) == 0:
+            exercises[key]["Name"], exercises[key]["Reps"], exercises[key]["Sets"], exercises[key]["Weight"] = getLowerLevelExercise(key, all_levels, experience_level -1, user_equipment, exercise_names, exercise_reps, exercise_sets, exercise_weight)
+        else:
+            exercises[key]["Reps"] = exercise_reps
+            exercises[key]["Sets"] = exercise_sets
+            exercises[key]["Weight"] = exercise_weight
+        
+    print("\n\nExercies to return to the user:")
+    for key, value in exercises.items():
+        print(key, ' : ', value)
+        
+    return exercises
+
+
+# Recursive function to get exercises according to level and equipment     
+def getLowerLevelExercise(body_part, all_levels, new_level, user_equipment, exercise_names, exercise_reps, exercise_sets, exercise_weight):
+    if new_level < 0:
+        return [], [], [], []
+        
+    if new_level >= 0:
+        # get lower level
+        lower_level = all_levels[new_level]
+
+        # append exercises for given body part if the user has the equipment
+        for i in range(len(lower_level[body_part]['EquipmentNeeded'])):
+            if lower_level[body_part]['EquipmentNeeded'][i] in user_equipment or lower_level[body_part]['EquipmentNeeded'][i] == "NA":
+                exercise_names.append(lower_level[body_part]["ExerciseName"][i])
+                exercise_reps.append(lower_level[body_part]["StartingReps"][i])
+                exercise_sets.append(lower_level[body_part]["StartingSets"][i])
+                exercise_weight.append(lower_level[body_part]["StartingWeight"][i])
+                
+        # if user has no equipment for that body part, repeat with lower level exercise for body part        
+        if len(exercise_names) == 0:
+            getLowerLevelExercise(body_part, all_levels, new_level -1, user_equipment, exercise_names, exercise_reps, exercise_sets, exercise_weight)
+    return exercise_names, exercise_reps, exercise_sets, exercise_weight
 
 
 #Update data for user
