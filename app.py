@@ -48,7 +48,7 @@ def enterWorkoutQuestionaireForm():
     workoutData = getInitialWorkoutPlansForUser(request_body)
 
     response = app.response_class(
-        response=json.dumps(data),
+        response=json.dumps(workoutData),
         status=200,
         mimetype='application/json'
     )
