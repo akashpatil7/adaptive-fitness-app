@@ -39,10 +39,9 @@ def enterQuestionaireForm():
     
 @app.route('/workouts/getPlans', methods=['POST'])
 def enterWorkoutQuestionaireForm():
-    id = request.json['email']
-
     request_body = request.json
-    #explicit_data.document(id).set(request.json)
+    
+    id = request_body['email']
 
     #Get initial workout plan
     workoutData = getInitialWorkoutPlansForUser(request_body)
@@ -57,10 +56,9 @@ def enterWorkoutQuestionaireForm():
     
 @app.route('/workouts/makeRecommendations', methods=['POST'])
 def makeWorkoutRecommendations():
-    id = request.json['email']
-
     request_body = request.json
-    #explicit_data.document(id).set(request.json)
+    
+    id = request_body['email']
 
     #Get last exercises completed
     workoutHistory = request_body['workout_history']
@@ -75,7 +73,28 @@ def makeWorkoutRecommendations():
     )
     return response
     
+@app.route('/workouts/updateHistory', methods=['POST'])
+def updateWorkoutHistory():
 
+    request_body = request.json
+    
+    id = request_body['email']
+    core = request_body["core"]
+    
+    print(id)
+    print(core)
+    
+    #Get last exercises completed
+    #workoutHistory = request_body['workout_history']
+    
+    
+    returnData = {}
+    response = app.response_class(
+        response=json.dumps(returnData),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
     
 
 # Get initial workout plans for user 
