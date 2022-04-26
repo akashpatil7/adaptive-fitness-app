@@ -11,6 +11,9 @@ db = firestore.client()
 explicit_data = db.collection('explicit-info')
 exercise_plans_data = db.collection('exercise_plan')
 food_plans_data = db.collection('food_plan')
+user_data = db.collection('users')
+current_recommendations = db.collection('current_recommendations')
+last_workout = db.collection('last_workout')
 
 app = Flask(__name__)
 
@@ -112,6 +115,16 @@ def getInitialWorkoutPlansForUser(data):
     print("\n\nExercies to return to the user:")
     for key, value in exercises.items():
         print(key, ' : ', value)
+
+    id = data['email']
+    current_recommendations.document(id).set(exercises)
+
+    final_list_of_workouts = {}
+    for key, value in exercises.items():
+        final_list_of_workouts[key] = value["Id"][0]
+
+    #user_data.document(id).collection("last_workout").add(final_list_of_workouts)
+    last_workout.document(id).set(final_list_of_workouts)
 
     return exercises
 
