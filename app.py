@@ -84,20 +84,20 @@ def makeWorkoutRecommendations():
     
 @app.route('/workouts/updateHistory', methods=['POST'])
 def updateWorkoutHistory():
-        '''
-            Example POST request in Postman:
-            
-            url: http://127.0.0.1:5000/workouts/updateHistory
-            
-            body (raw, JSON): {
-                                "email": "abc@gmail.com",
-                                "core" : "CR06" ,
-                                "chest" : "CH01",
-                                "legs" : "L01",
-                                "shoulders/arms" : "A02",
-                                "back" : "B01"
-                                }
-        '''
+    '''
+        Example POST request in Postman:
+        
+        url: http://127.0.0.1:5000/workouts/updateHistory
+        
+        body (raw, JSON): {
+                            "email": "abc@gmail.com",
+                            "core" : "CR06" ,
+                            "chest" : "CH01",
+                            "legs" : "L01",
+                            "shoulders/arms" : "A02",
+                            "back" : "B01"
+                            }
+    '''
 
     request_body = request.json
     
