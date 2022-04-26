@@ -91,7 +91,7 @@ def updateWorkoutHistory():
         url: http://127.0.0.1:5000/workouts/updateHistory
         
         body (raw, JSON): {
-                            "email": "abc@gmail.com",
+                            "email": "test@test.com",
                             "core" : "yes" ,
                             "chest" : "no",
                             "legs" : "no",
@@ -103,17 +103,44 @@ def updateWorkoutHistory():
     request_body = request.json
     
     id = request_body['email']
-    core = request_body["core"]
     
+    # Get current recommendations list and last recorded exercises
+    recommendations = current_recommendations.document(id).get()
+    history = workout_history.document(id).get()
+    
+    
+    if history.exists and recommendations.exists:
+        history = history.to_dict()
+        recommendations = recommendations.to_dict()
+        body_parts = ['core', 'back', 'chest', 'legs', 'shoulders/arms']
         
-    #Get last exercises completed
-    recommendations = [doc.to_dict() for doc in current_recommendations.stream()]
-    history = [doc.to_dict() for doc in workout_history.stream()]
-    
-    if core == "yes":
-        print("user did core exercise")
+        for body_part in body_parts:
+            
+            if request_body[body_part] == "yes":
+                # gets all core exercises from recommendation list
+                exercises = recommendations[body_part]['Id']
+                print(body_part + " exercises: ", exercises)
+                
+                # gets inidex of latest excercise performed from list of all core execises
+                workout_index = exercises.index(history[body_part])
+                
+                # get next workout
+                new_exercise = exercises[(workout_index + 1) % len(exercises)]
+                print("new " + body_part + " exercise: ", new_exercise)
+                
+                # update history 
+                if body_part == 'shoulders/arms':
+                    field = FieldPath.of("shoulders/arms")
+                    workout_history.document(id).update({field: new_exercise})
+                else:
+                    workout_history.document(id).update({body_part: new_exercise})
+                
+            else:
+                print("They didn't do the " + body_part + " exercise")
+        
+        
     else:
-        print("user did not do core exercise")
+        print(u'User does not have a history or recommendations list!')
     
     
     returnData = {}
