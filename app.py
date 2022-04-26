@@ -53,10 +53,30 @@ def enterWorkoutQuestionaireForm():
         mimetype='application/json'
     )
     return response
+    
+    
+@app.route('/workouts/makeRecommendations', methods=['POST'])
+def makeWorkoutRecommendations():
+    id = request.json['email']
 
-#Show workout plans for user
+    request_body = request.json
+    #explicit_data.document(id).set(request.json)
 
-#Show diet plans for user
+    #Get last exercises completed
+    workoutHistory = request_body['workout_history']
+    #Get master list of exercises to recommend
+    workoutList = request_body['workout_list']
+    
+    returnData = {}
+    response = app.response_class(
+        response=json.dumps(returnData),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
+    
+
+    
 
 # Get initial workout plans for user 
 def getInitialWorkoutPlansForUser(data):
