@@ -86,9 +86,11 @@ def getInitialWorkoutPlansForUser(data):
         exercise_sets = []
         exercise_weight = []
         weight_increment = []
+        exercise_ids = []
         # append body part exercises for user if the user has the equipment 
         for i in range(len(value['EquipmentNeeded'])):
             if value['EquipmentNeeded'][i] in user_equipment or value['EquipmentNeeded'][i] == "NA":
+                exercise_ids.append((value["ExerciseID"][i]))
                 exercise_names.append(value["ExerciseName"][i])
                 exercise_reps.append(value["StartingReps"][i])
                 exercise_sets.append(value["StartingSets"][i])
@@ -97,9 +99,10 @@ def getInitialWorkoutPlansForUser(data):
                 
         exercises[key] = {}
         exercises[key]["Name"] = exercise_names
+        exercises[key]["Id"] = exercise_ids
         # if user has no equipment for that body part, repeat with lower level exercise for body part
         if len(exercises[key]["Name"]) == 0:
-            exercises[key]["Name"], exercises[key]["Reps"], exercises[key]["Sets"], exercises[key]["Weight"], exercises[key]["WeightIncrement"] = getLowerLevelExercise(key, all_levels, experience_level -1, user_equipment, exercise_names, exercise_reps, exercise_sets, exercise_weight, weight_increment)
+            exercises[key]["Id"], exercises[key]["Name"], exercises[key]["Reps"], exercises[key]["Sets"], exercises[key]["Weight"], exercises[key]["WeightIncrement"] = getLowerLevelExercise(exercise_ids, key, all_levels, experience_level -1, user_equipment, exercise_names, exercise_reps, exercise_sets, exercise_weight, weight_increment)
         else:
             exercises[key]["Reps"] = exercise_reps
             exercises[key]["Sets"] = exercise_sets
@@ -109,14 +112,14 @@ def getInitialWorkoutPlansForUser(data):
     print("\n\nExercies to return to the user:")
     for key, value in exercises.items():
         print(key, ' : ', value)
-        
+
     return exercises
 
 
 # Recursive function to get exercises according to level and equipment     
-def getLowerLevelExercise(body_part, all_levels, new_level, user_equipment, exercise_names, exercise_reps, exercise_sets, exercise_weight, weight_increment):
+def getLowerLevelExercise(exercise_ids, body_part, all_levels, new_level, user_equipment, exercise_names, exercise_reps, exercise_sets, exercise_weight, weight_increment):
     if new_level < 0:
-        return [], [], [], []
+        return [], [], [], [], [], []
         
     if new_level >= 0:
         # get lower level
@@ -125,6 +128,7 @@ def getLowerLevelExercise(body_part, all_levels, new_level, user_equipment, exer
         # append exercises for given body part if the user has the equipment
         for i in range(len(lower_level[body_part]['EquipmentNeeded'])):
             if lower_level[body_part]['EquipmentNeeded'][i] in user_equipment or lower_level[body_part]['EquipmentNeeded'][i] == "NA":
+                exercise_ids.append(lower_level[body_part]["ExerciseID"][i])
                 exercise_names.append(lower_level[body_part]["ExerciseName"][i])
                 exercise_reps.append(lower_level[body_part]["StartingReps"][i])
                 exercise_sets.append(lower_level[body_part]["StartingSets"][i])
@@ -133,8 +137,8 @@ def getLowerLevelExercise(body_part, all_levels, new_level, user_equipment, exer
                 
         # if user has no equipment for that body part, repeat with lower level exercise for body part        
         if len(exercise_names) == 0:
-            getLowerLevelExercise(body_part, all_levels, new_level -1, user_equipment, exercise_names, exercise_reps, exercise_sets, exercise_weight, weight_increment)
-    return exercise_names, exercise_reps, exercise_sets, exercise_weight, weight_increment
+            getLowerLevelExercise(exercise_ids, body_part, all_levels, new_level -1, user_equipment, exercise_names, exercise_reps, exercise_sets, exercise_weight, weight_increment)
+    return exercise_ids, exercise_names, exercise_reps, exercise_sets, exercise_weight, weight_increment
 
 
 #Update data for user
