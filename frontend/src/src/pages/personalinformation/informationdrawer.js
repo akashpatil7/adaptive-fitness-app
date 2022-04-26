@@ -5,7 +5,7 @@ import './drawer.css';
 import {Drawer, Form, Button, Col, Row, Input, Select, DatePicker, InputNumber, message, Radio} from 'antd';
 import { SettingOutlined } from '@ant-design/icons';
 import memoryUtils from "../../utils/memoryUtils";
-import fire from "../../api/commonFirebase";
+import fire, {db} from "../../api/commonFirebase";
 //a
 const { Option } = Select;
 
@@ -28,24 +28,22 @@ export  default  class DrawerForm extends React.Component {
             visible: false,
         });
     };
-    componentDidMount() {
-        this.queryInformation();
+
+    async componentDidMount() {
+        var docRef = await db.collection("users").doc(memoryUtils.user.username);
+        docRef.get().then(async (doc) => {
+            if (doc.exists) {
+                this.setState({list: doc.data()}, () => {
+                    console.log(this.state.list);
+                })
+            } else {
+                console.log("No such document!");
+            }
+        }).catch((error) => {
+            console.log("Error getting document:", error);
+        });
     }
-    /**
-     * @function：queryInformation
-     * @parameter：null
-     * @description： Query the matching user information through the user mailbox
-     */
-    queryInformation ()
-    {
 
-        var user = memoryUtils.user.username.split(".")[0];
-        //Get user information by Rest API
-
-        this.setState({list: {test:""}})
-
-
-    };
     render() {
 
         const layout = {
@@ -75,23 +73,17 @@ export  default  class DrawerForm extends React.Component {
          */
         const onFinish = values => {
             console.log(values);
-            //Determine if the user has changed the value
-            var user = memoryUtils.user.username.split(".")[0];
-            //var vaddress = (values.address === undefined ? this.state.list.address : values.address)
-            //var vfrequency =  (this.state.ratio === undefined ? this.state.list.ratio:this.state.ratio)
-
-            //send data by Rest API
-
-            message.success("modify successfully !")
+            
+            var washingtonRef = db.collection("users").doc(memoryUtils.user.username);
+            //Set the "capital" field of the city 'DC'
+            return washingtonRef.update(values)
+                .then(() => {
+                    message.success("successfully updated!")
+                })
+                .catch((error) => {
+                    console.error("Error updating document: ", error);
+                });
         };
-        const activity_level_change = (value)=> {
-            this.setState({activity_level_ratio:value.target.value})
-            console.log("activity_level:"+this.state.ratio)
-        }
-        const weight_training_level_change = (value)=> {
-            this.setState({weight_training_level_ratio:value.target.value})
-            console.log("weight_training_level:"+this.state.ratio)
-        }
 
         return (
 
@@ -119,41 +111,141 @@ export  default  class DrawerForm extends React.Component {
                     }
                 >
                     <Form {...layout} name="nest-messages" onFinish={onFinish} validateMessages={validateMessages}>
-                        <Form.Item name={'Height(cm)'} label="height">
-                            <InputNumber  ref="text" defaultValue={0}></InputNumber>
+                        <Form.Item
+                            name="email"
+                            label="E-mail"
+                            initialValue={this.state.list.email}
+                        >
+                            <Input disabled={true}  defaultValue={this.state.list.email}/>
                         </Form.Item>
 
-                        <Form.Item name={'Weight'} label="weight" >
-                            <InputNumber defaultValue={0}/>
+                        <Form.Item
+                            name="height"
+                            label="Height(cm)"
+                            initialValue={this.state.list.height}
+                            rules={[
+                                {
+                                    required: true,
+                                    message: "Please input your height!"
+                                }
+                            ]}
+                        >
+                            <InputNumber  defaultValue={this.state.list.height}/>
                         </Form.Item>
 
-                        <Form.Item name={'Weight Goal(Kg)'} label="weight_goal">
-                            <Input defaultValue={"default_weight_goal_value"}/>
+                        <Form.Item
+                            name="weight"
+                            label="Weight(kg)"
+                            initialValue={ this.state.list.weight}
+                            rules={[
+                                {
+                                    required: true,
+                                    message: "Please input your weight!",
+                                }
+                            ]}
+                        >
+                            <InputNumber defaultValue={this.state.list.weight}/>
                         </Form.Item>
 
-                        <Form.Item name={'Dietary Restrictions'} label="dietary_restrictions">
-                            <Input defaultValue={"default_dietary_restrictions"}/>
-                        </Form.Item>
-
-
-                        <Form.Item name={'Activity Level'} label="activity_level" rules={[{  required: true,
-                            message: "Please input your activity level" }]}>
-                            <Radio.Group onChange={activity_level_change}  defaultValue={"sedentary"}>
-                                <Radio value={"sedentary"}>Sedentary</Radio>
-                                <Radio value={"lightly"}>Lightly Active</Radio>
-                                <Radio value={"moderately"}>Moderately Active</Radio>
-                                <Radio value={"very"}>Very Active</Radio>
+                        <Form.Item name={'weight_goals'} label="Weight Goals" initialValue={this.state.list.weight_goals}>
+                            <Radio.Group defaultValue={this.state.list.weight_goals}>
+                                <Radio value={'gain_weight'}>Gain Weight</Radio>
+                                <Radio value={'lose_weight'}>Lose Weight </Radio>
+                                <Radio value={'maintain_weight'}>Maintain Weight</Radio>
                             </Radio.Group>
                         </Form.Item>
 
-                        <Form.Item name={'Weight Training Level'} label="weight_training_level" rules={[{  required: true,
-                            message: "Please input your weight training level" }]}>
-                            <Radio.Group onChange={weight_training_level_change} defaultValue={"beginner"} >
-                                <Radio value={"beginner"}>Beginner (0-1 years)</Radio>
-                                <Radio value={"intermediate"}>Intermediate (2-4 years)</Radio>
-                                <Radio value={"advanced"}>Advanced (4+ years)</Radio>
+
+                        <Form.Item name={'age'} label="Age" rules={[{ required: true,type: 'number', min: 0, max: 99 }]} initialValue={this.state.list.age}>
+                            <InputNumber defaultValue={this.state.list.age}/>
+                        </Form.Item>
+
+
+
+                        <Form.Item name={'gender'} label="Gender" initialValue={this.state.list.gender}>
+                            <Radio.Group  defaultValue={this.state.list.gender} disabled={true}>
+                                <Radio value={'male'}>Male</Radio>
+                                <Radio value={'female'}>Female</Radio>
                             </Radio.Group>
                         </Form.Item>
+
+                        <Form.Item name={'dietary_restrictions'} label='Dietary Restrictions' initialValue={this.state.list.dietary_restrictions}>
+                            <Select defaultValue={this.state.list.dietary_restrictions} style={{ width: 150 }} >
+                                <Option value="no_restriction">No Restrictions</Option>
+                                <Option value="vegetarian_vegan">Vegetarian</Option>
+                                <Option value="gluten_free">Gluten-free</Option>
+                            </Select>
+                        </Form.Item>
+
+                        <Form.Item name={'gym_equipment'} label='Gym Equipment' initialValue={this.state.list.gym_equipment}>
+                            <Select
+                                style={{ width: '100%' }}
+                                placeholder="select one country"
+                                defaultValue={this.state.list.dietary_restrictions}
+                                optionLabelProp="label"
+                            >
+
+                                <Option value="0" label="No Equipment">
+                                    <div className="no_equipment">
+                                        No equipment
+                                    </div>
+                                </Option>
+
+                                <Option value="dumbbells" label="Dumbbells">
+                                    <div className="dumbbells">
+                                        Dumbbells
+                                    </div>
+                                </Option>
+
+                                <Option value="yoga mat" label="Yoga Mat">
+                                    <div className="yoga_mat">
+                                        Yoga Mat
+                                    </div>
+                                </Option>
+
+                                <Option value="resistance bands" label="Resistance Bands">
+                                    <div className="resistance_bands">
+                                        Resistance Bands
+                                    </div>
+                                </Option>
+
+                                <Option value="pull-up bar" label="Pull-up Bar">
+                                    <div className="pull_up_bar">
+                                        Pull-up Bar
+                                    </div>
+                                </Option>
+
+                                <Option value="machines" label="Machines">
+                                    <div className="machines">
+                                        Machines
+                                    </div>
+                                </Option>
+                            </Select>
+                        </Form.Item>
+
+
+
+
+                        <Form.Item name={'activity_level'} label='Activity Level' initialValue={this.state.list.activity_level_ratio}>
+                            <Select style={{ width: 150 }}  defaultValue={this.state.activity_level_ratio}>
+                                <Option value={"sedentary"}>Sedentary</Option>
+                                <Option value={"lightly"}>Lightly active</Option>
+                                <Option value={"moderate"}>moderate active</Option>
+                                <Option value={"active"}>Very active</Option>
+                                <Option value={"athlete"}>Athlete</Option>
+                            </Select>
+                        </Form.Item>
+
+
+                        <Form.Item name={'experience'} label='Experience' initialValue={this.state.list.experience}>
+                            <Select defaultValue={this.state.list.experience} style={{ width: 150 }} >
+                                <Option value={"1 month"}>1 month</Option>
+                                <Option value={"6 months"}>6 months</Option>
+                                <Option value={"1 year"}>1 year</Option>
+                                <Option value={"2 year"}>2 years</Option>
+                            </Select>
+                        </Form.Item>
+
 
                         <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
                             <Button type="primary" htmlType="submit">

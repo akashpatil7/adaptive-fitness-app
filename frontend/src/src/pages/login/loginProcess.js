@@ -3,11 +3,7 @@ import React,{Component} from "react";
 import DrawerForm from './registrationDrawer'
 import fire from "../../api/commonFirebase";
 import { withRouter } from 'react-router-dom';
-import memoryUtils from "../../utils/memoryUtils";
-import storageUtils from "../../utils/storageUtils";
 import {authenticationSign, getPlansData} from "../../api/firebaseApi";
-import axios from "axios";
-import ajax from "../../api/ajax";
 class  Demo extends Component{
     state = { visible: false };
      layout = {

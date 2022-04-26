@@ -1,8 +1,6 @@
 import fire, {db} from "./commonFirebase";
-import storageUtils from "../utils/storageUtils";
 import memoryUtils from "../utils/memoryUtils";
 import {message} from "antd";
-import {reqRegister} from "./index";
 import ajax from "./ajax";
 
 
@@ -33,6 +31,9 @@ export async function authenticationSign(username, password) {
     message.success("Success!")
     return true;
 };
+
+
+
 
 export function addData(collectionPath,doc,data){
     db.collection(collectionPath).doc(doc).set(data)

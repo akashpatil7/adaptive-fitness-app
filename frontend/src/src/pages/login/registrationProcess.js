@@ -197,8 +197,8 @@ class  RegistrationForm extends Component{
                     <InputNumber/>
                 </Form.Item>
 
-                <Form.Item name={'weight_goals'} label="Weight Goals" initialValue={"weight gain"}>
-                    <Radio.Group onChange={weight_goals} defaultValue={'weight gain'}>
+                <Form.Item name={'weight_goals'} label="Weight Goals" initialValue={"gain_weight"}>
+                    <Radio.Group onChange={weight_goals} defaultValue={'gain_weight'}>
                         <Radio value={'gain_weight'}>Gain Weight</Radio>
                         <Radio value={'lose_weight'}>Lose Weight </Radio>
                         <Radio value={'maintain_weight'}>Maintain Weight</Radio>
@@ -219,25 +219,23 @@ class  RegistrationForm extends Component{
                     </Radio.Group>
                 </Form.Item>
 
-                <Form.Item name={'dietary_restrictions'} label='Dietary Restrictions' initialValue={"No Restrictions"}>
+                <Form.Item name={'dietary_restrictions'} label='Dietary Restrictions' initialValue={"no_restriction"}>
                     <Select defaultValue="no_restriction" style={{ width: 150 }} onChange={dietary_restrictions}>
-                        <Option value="no_restriction">No restrictions</Option>
+                        <Option value="no_restriction">No Restrictions</Option>
                         <Option value="vegetarian_vegan">Vegetarian</Option>
                         <Option value="gluten_free">Gluten-free</Option>
                     </Select>
                 </Form.Item>
 
-            <Form.Item name={'gym_equipment'} label='Gym Equipment' initialValue={'No Equipment'}>
+            <Form.Item name={'gym_equipment'} label='Gym Equipment' initialValue={"0"}>
                 <Select
                     style={{ width: '100%' }}
-                    placeholder="select one country"
                     defaultValue="0"
                     onChange={gym_equipment}
                     optionLabelProp="label"
-                    value={this.state.gym_equipment}
                 >
 
-                    <Option value="0" label="No equipment">
+                    <Option value="0" label="No Equipment">
                         <div className="no_equipment">
                             No equipment
                         </div>
@@ -279,7 +277,7 @@ class  RegistrationForm extends Component{
 
 
                 <Form.Item name={'activity_level'} label='Activity Level' initialValue={'sedentary'}>
-                    <Select defaultValue="sedentary" style={{ width: 150 }} onChange={activity_level_Change} value={this.state.activity_level_ratio}>
+                    <Select defaultValue={"sedentary"} style={{ width: 150 }} onChange={activity_level_Change}>
                         <Option value={"sedentary"}>Sedentary</Option>
                         <Option value={"lightly"}>Lightly active</Option>
                         <Option value={"moderate"}>moderate active</Option>
@@ -290,7 +288,7 @@ class  RegistrationForm extends Component{
 
 
                 <Form.Item name={'experience'} label='Experience' initialValue={'1 month'}>
-                    <Select defaultValue="1 month" style={{ width: 150 }} onChange={experience}>
+                    <Select defaultValue={"1 month"} style={{ width: 150 }} onChange={experience}>
                         <Option value={"1 month"}>1 month</Option>
                         <Option value={"6 months"}>6 months</Option>
                         <Option value={"1 year"}>1 year</Option>

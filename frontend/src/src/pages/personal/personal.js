@@ -121,13 +121,14 @@ const { SubMenu } = Menu;
                         <SubMenu key="sub1" icon={<UserOutlined />} title={user} >
                             <Menu.Item key="3"> <Link to ='/personal/personalinformation'>Personal information</Link></Menu.Item>
                             <Menu.Item key="4"> <Link to ='/personal/mycollection'>Collection</Link></Menu.Item>
-                            <Menu.Item key="5"> <Link to ='/personal/addfoodcard'>Diet Plans</Link></Menu.Item>
-                            <Menu.Item key="6"> <Link to ='/personal/addfoodcard'>Exercise plans</Link></Menu.Item>
+                            <Menu.Item key="5"> <Link to ='/personal/addfoodcard'>Customized Food Card</Link></Menu.Item>
                         </SubMenu>
                         <Menu.Item key="2" icon={<CalendarOutlined />}>
-                           <Link to ='/personal/plan'>Plan</Link>
+                           <Link to ='/personal/plan'>Diet Plans</Link>
                         </Menu.Item>
-
+                        <Menu.Item key="23" icon={<CalendarOutlined />}>
+                            <Link to ='/personal/plan'>Exercise plans</Link>
+                        </Menu.Item>
 
                         <Menu.Item key="9" icon={<SearchOutlined />}>
                             <Link to ='/personal/search'>Search</Link>
