@@ -71,6 +71,8 @@ class PlantListComponent extends React.Component {
                 'Accept': 'application/json',
                 'Content-Type': 'application/json',
             },
+
+
             body: JSON.stringify(
                 {
                     name: food.name,
@@ -142,7 +144,7 @@ class PlantListComponent extends React.Component {
                 }
             }
         );
-        console.log(result.length);
+        console.log(result);
         this.setState({
             displayitems: result
         });
@@ -150,6 +152,7 @@ class PlantListComponent extends React.Component {
 
     render() {
         const {error, isLoaded, items, displayitems, num} = this.state;
+
         if (error) {
             return <div> Error: {error.message} </div>;
         } else if (!isLoaded) {
