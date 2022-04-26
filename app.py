@@ -11,7 +11,8 @@ db = firestore.client()
 explicit_data = db.collection('explicit-info')
 exercise_plans_data = db.collection('exercise_plan')
 food_plans_data = db.collection('food_plan')
-users = db.collection('users')
+current_recommendations = db.collection('current_recommendations')
+workout_history = db.collection('last_workout')
 
 app = Flask(__name__)
 
@@ -71,11 +72,8 @@ def makeWorkoutRecommendations():
     id = request_body['email']
 
     #Get last exercises completed
-    userInfo = [doc.to_dict() for doc in users.stream()]
-    workoutHistory = userInfo["last_workout"]
-        
-    #Get master list of exercises to recommend
-    workoutList = userInfo["current_recommendations"]
+    recommendations = [doc.to_dict() for doc in current_recommendations.stream()]
+    history = [doc.to_dict() for doc in workout_history.stream()]
     
     returnData = {}
     response = app.response_class(
@@ -109,9 +107,8 @@ def updateWorkoutHistory():
     
         
     #Get last exercises completed
-    userInfo = [doc.to_dict() for doc in users.stream()]
-    workoutHistory = userInfo["last_workout"]
-    workoutList = userInfo["current_recommendations"]
+    recommendations = [doc.to_dict() for doc in current_recommendations.stream()]
+    history = [doc.to_dict() for doc in workout_history.stream()]
     
     if core == "yes":
         print("user did core exercise")
