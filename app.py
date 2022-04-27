@@ -141,6 +141,7 @@ def updateWorkoutHistory():
     )
     return response
 
+
 # Get initial workout plans for user 
 def getInitialWorkoutPlansForUser(data):
     # get user data
