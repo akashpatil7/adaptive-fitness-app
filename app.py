@@ -94,7 +94,8 @@ def updateWorkoutHistory():
                                 'chest': {},
                                 'legs': {}, 
                                 'shoulders': {}}
-        
+
+        updated_document = recommendations
         for body_part in body_parts:
             
             # gets all body part exercise ids from recommendation list
@@ -115,7 +116,25 @@ def updateWorkoutHistory():
                 new_recommendations[body_part]["Sets"] = recommendations[body_part]["Sets"][new_exercise_index]
                 new_recommendations[body_part]["Reps"] = recommendations[body_part]["Reps"][new_exercise_index]
                 new_recommendations[body_part]["Weight"] = recommendations[body_part]["Weight"][new_exercise_index]
-                
+
+                body_part_reps = int(recommendations[body_part]["Reps"][workout_index])
+                rep_range_for_body_part = str(recommendations[body_part]["RepRange"][workout_index]).split(",")
+                min_rep_for_body_part = int(rep_range_for_body_part[0])
+                max_rep_for_body_part = int(rep_range_for_body_part[1])
+
+                new_weight_for_body_part = recommendations[body_part]["Weight"][workout_index]
+                new_body_part_reps = body_part_reps + 1
+                if recommendations[body_part]["Weight"][workout_index] != "NA":
+                    if body_part_reps == max_rep_for_body_part:
+                        new_body_part_reps = min_rep_for_body_part
+                        new_weight_for_body_part = int(recommendations[body_part]["Weight"][workout_index]) + int(recommendations[body_part]["WeightIncrement"][workout_index])
+
+                updated_document[body_part]["Reps"][workout_index] = new_body_part_reps
+
+                updated_document[body_part]["Weight"][workout_index] = str(new_weight_for_body_part)
+
+                current_recommendations.document(id).update({body_part: updated_document[body_part]})
+
                 # update history with new workouts 'currently doing'
                 workout_history.document(id).update({body_part: new_recommendations[body_part]["Id"]})
                 
@@ -160,7 +179,9 @@ def getInitialWorkoutPlansForUser(data):
 
     # dictionary to store the exercises the user can do
     exercises = {}
-    
+
+    #TODO Need to handle scenario where there is no equipement
+
     # for each exercise, check that the user has the right equipment. If not, repeat for lower level exercises
     print("\nAll exercises for user level:")
     for key, value in exercises_for_user_level.items():
@@ -171,11 +192,13 @@ def getInitialWorkoutPlansForUser(data):
         exercise_weight = []
         weight_increment = []
         exercise_ids = []
+        exercise_rep_range = []
         # append body part exercises for user if the user has the equipment 
         for i in range(len(value['EquipmentNeeded'])):
             if value['EquipmentNeeded'][i] in user_equipment or value['EquipmentNeeded'][i] == "NA":
                 exercise_ids.append((value["ExerciseID"][i]))
                 exercise_names.append(value["ExerciseName"][i])
+                exercise_rep_range.append(value["RepRange"][i])
                 exercise_reps.append(value["StartingReps"][i])
                 exercise_sets.append(value["StartingSets"][i])
                 exercise_weight.append(value["StartingWeight"][i])
@@ -186,9 +209,10 @@ def getInitialWorkoutPlansForUser(data):
         exercises[key]["Id"] = exercise_ids
         # if user has no equipment for that body part, repeat with lower level exercise for body part
         if len(exercises[key]["Name"]) == 0:
-            exercises[key]["Id"], exercises[key]["Name"], exercises[key]["Reps"], exercises[key]["Sets"], exercises[key]["Weight"], exercises[key]["WeightIncrement"] = getLowerLevelExercise(exercise_ids, key, all_levels, experience_level -1, user_equipment, exercise_names, exercise_reps, exercise_sets, exercise_weight, weight_increment)
+            exercises[key]["Id"], exercises[key]["Name"], exercises[key]["Reps"], exercises[key]["RepRange"], exercises[key]["Sets"], exercises[key]["Weight"], exercises[key]["WeightIncrement"] = getLowerLevelExercise(exercise_ids, key, all_levels, experience_level -1, user_equipment, exercise_names, exercise_reps, exercise_rep_range, exercise_sets, exercise_weight, weight_increment)
         else:
             exercises[key]["Reps"] = exercise_reps
+            exercises[key]["RepRange"] = exercise_rep_range
             exercises[key]["Sets"] = exercise_sets
             exercises[key]["Weight"] = exercise_weight
             exercises[key]["WeightIncrement"] = weight_increment
@@ -218,9 +242,9 @@ def getInitialWorkoutPlansForUser(data):
 
 
 # Recursive function to get exercises according to level and equipment     
-def getLowerLevelExercise(exercise_ids, body_part, all_levels, new_level, user_equipment, exercise_names, exercise_reps, exercise_sets, exercise_weight, weight_increment):
+def getLowerLevelExercise(exercise_ids, body_part, all_levels, new_level, user_equipment, exercise_names, exercise_reps, exercise_rep_range, exercise_sets, exercise_weight, weight_increment):
     if new_level < 0:
-        return [], [], [], [], [], []
+        return [], [], [], [], [], [], []
         
     if new_level >= 0:
         # get lower level
@@ -232,14 +256,15 @@ def getLowerLevelExercise(exercise_ids, body_part, all_levels, new_level, user_e
                 exercise_ids.append(lower_level[body_part]["ExerciseID"][i])
                 exercise_names.append(lower_level[body_part]["ExerciseName"][i])
                 exercise_reps.append(lower_level[body_part]["StartingReps"][i])
+                exercise_rep_range.append(lower_level[body_part]["RepRange"][i])
                 exercise_sets.append(lower_level[body_part]["StartingSets"][i])
                 exercise_weight.append(lower_level[body_part]["StartingWeight"][i])
                 weight_increment.append(lower_level[body_part]["WeightIncrement "][i]) # ******************** Note the space at the end of the string
                 
         # if user has no equipment for that body part, repeat with lower level exercise for body part        
         if len(exercise_names) == 0:
-            getLowerLevelExercise(exercise_ids, body_part, all_levels, new_level -1, user_equipment, exercise_names, exercise_reps, exercise_sets, exercise_weight, weight_increment)
-    return exercise_ids, exercise_names, exercise_reps, exercise_sets, exercise_weight, weight_increment
+            getLowerLevelExercise(exercise_ids, body_part, all_levels, new_level -1, user_equipment, exercise_names, exercise_reps, exercise_rep_range, exercise_sets, exercise_weight, weight_increment)
+    return exercise_ids, exercise_names, exercise_reps, exercise_rep_range, exercise_sets, exercise_weight, weight_increment
 
 
 #Update data for user
