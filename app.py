@@ -57,7 +57,7 @@ def enterWorkoutQuestionaireForm():
     
     
 @app.route('/workouts/makeRecommendations', methods=['POST'])
-def makeWorkoutRecommendations():
+def makeWorkoutRecommendations(workout_list, index):
     '''
         Example POST request in Postman:
         
@@ -67,14 +67,21 @@ def makeWorkoutRecommendations():
                             "email": "abc@gmail.com",
                             } 
     '''
-    request_body = request.json
-    
-    id = request_body['email']
 
-    #Get last exercises completed
-    recommendations = [doc.to_dict() for doc in current_recommendations.stream()]
-    history = [doc.to_dict() for doc in workout_history.stream()]
-    
+    print("This is a test")
+    body_parts = ['core', 'back', 'chest', 'legs', 'shoulders']
+    new_recommendations = {}
+    print("New index: ", index)
+    for body_part in body_parts:
+        print(workout_list[body_part]["Id"][index % len(workout_list[body_part])])
+        new_recommendations[body_part]["Id"] = workout_list[body_part]["Id"][index % len(workout_list[body_part])]
+        new_recommendations[body_part]["Name"] = workout_list[body_part]["Name"][index % len(workout_list[body_part])]
+        new_recommendations[body_part]["Sets"] = workout_list[body_part]["Sets"][index % len(workout_list[body_part])]
+        new_recommendations[body_part]["Reps"] = workout_list[body_part]["Reps"][index % len(workout_list[body_part])]
+        new_recommendations[body_part]["Weight"] = workout_list[body_part]["Weight"][index % len(workout_list[body_part])]
+        
+
+    print(new_recommendations)
     returnData = {}
     response = app.response_class(
         response=json.dumps(returnData),
@@ -108,32 +115,42 @@ def updateWorkoutHistory():
     recommendations = current_recommendations.document(id).get()
     history = workout_history.document(id).get()
     
-    
     if history.exists and recommendations.exists:
         history = history.to_dict()
         recommendations = recommendations.to_dict()
-        body_parts = ['core', 'back', 'chest', 'legs', 'shoulders/arms']
+        body_parts = ['core', 'back', 'chest', 'legs', 'shoulders']
+        
+        new_recommendations = {'core':{},
+                                'back': {},
+                                'chest': {},
+                                'legs': {}, 
+                                'shoulders': {}}
         
         for body_part in body_parts:
             
             if request_body[body_part] == "yes":
-                # gets all core exercises from recommendation list
+                # gets all body part exercise ids from recommendation list
                 exercises = recommendations[body_part]['Id']
                 print(body_part + " exercises: ", exercises)
                 
-                # gets inidex of latest excercise performed from list of all core execises
+                # get inidex of latest excercise performed from list of all execises
                 workout_index = exercises.index(history[body_part])
                 
-                # get next workout
-                new_exercise = exercises[(workout_index + 1) % len(exercises)]
-                print("new " + body_part + " exercise: ", new_exercise)
+                # get next workout id
+                new_exercise_index = (workout_index + 1) % len(exercises)
+                new_exercise_id = exercises[new_exercise_index]
+                print("new " + body_part + " exercise: ", new_exercise_id)
                 
+                # get next workout recommendations
+                new_recommendations[body_part]["Id"] = recommendations[body_part]["Id"][new_exercise_index]
+                new_recommendations[body_part]["Name"] = recommendations[body_part]["Name"][new_exercise_index]
+                new_recommendations[body_part]["Sets"] = recommendations[body_part]["Sets"][new_exercise_index]
+                new_recommendations[body_part]["Reps"] = recommendations[body_part]["Reps"][new_exercise_index]
+                new_recommendations[body_part]["Weight"] = recommendations[body_part]["Weight"][new_exercise_index]
+                
+            
                 # update history 
-                if body_part == 'shoulders/arms':
-                    field = FieldPath.of("shoulders/arms")
-                    workout_history.document(id).update({field: new_exercise})
-                else:
-                    workout_history.document(id).update({body_part: new_exercise})
+                workout_history.document(id).update({body_part: new_recommendations[body_part]["Id"]})
                 
             else:
                 print("They didn't do the " + body_part + " exercise")
@@ -141,7 +158,9 @@ def updateWorkoutHistory():
         
     else:
         print(u'User does not have a history or recommendations list!')
-    
+        
+    print(new_recommendations)
+    #makeWorkoutRecommendations(recommendations, new_exercise_index)
     
     returnData = {}
     response = app.response_class(
