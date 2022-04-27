@@ -31,6 +31,7 @@ import PersonalInformation from "../personalinformation/personalinformation"
 import myCollection from "../mycollection/mycollection";
 import Plan from "../plan/plan";
 import addFoodcard from "../addfoodcard/addfoodcard";
+import exercisePlan from "../exerciseplan/exercisePlan";
 
 const { confirm } = Modal;
 const { Header, Content, Footer, Sider } = Layout;
@@ -127,7 +128,7 @@ const { SubMenu } = Menu;
                            <Link to ='/personal/plan'>Diet Plans</Link>
                         </Menu.Item>
                         <Menu.Item key="23" icon={<CalendarOutlined />}>
-                            <Link to ='/personal/plan'>Exercise plans</Link>
+                            <Link to ='/personal/mycollection'>Workouts Plans</Link>
                         </Menu.Item>
 
                         <Menu.Item key="9" icon={<SearchOutlined />}>
@@ -157,6 +158,7 @@ const { SubMenu } = Menu;
                                 <Route path='/personal/personalinformation' component={PersonalInformation}/>
                                 <Route path='/personal/about' component={About}/>
                                 <Route path='/personal/plan' component={Plan}/>
+                                <Route path='/personal/mycollection' component={exercisePlan}/>
                                 <Route path='/personal/addfoodcard' component={addFoodcard}/>
                                 <Route path='/personal/search' component={PlantListComponent}/>
                                 <Route path='/personal/comments' component={Comments}></Route>

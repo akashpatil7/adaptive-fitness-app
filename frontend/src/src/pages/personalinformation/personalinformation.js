@@ -10,12 +10,26 @@ const UnreachableContext = React.createContext();
 const { confirm } = Modal;
 export default class PersonalInformation extends Component{
     state = {
+        equipment:"",
         list: {},
+
     };
     componentDidMount() {
         var docRef = db.collection("users").doc(memoryUtils.user.username);
         docRef.get().then(async (doc) => {
             if (doc.exists) {
+
+                let equi = "";
+                if(doc.data().gym_equipment.length > 1)
+                {
+                    for(const v of doc.data().gym_equipment)
+                    {
+                        equi += v+"; "
+                    }
+                }
+
+                this.setState({equipment:equi})
+
                 this.setState({list: doc.data()}, () => {
 
                     console.log(this.state.list);
@@ -68,7 +82,7 @@ export default class PersonalInformation extends Component{
                     <Descriptions.Item label="Status" span={3}>
                         <Badge status="processing" text="online" />
                     </Descriptions.Item>
-                    <Descriptions.Item label="Gym Equipment">{this.state.list.gym_equipment}</Descriptions.Item>
+                    <Descriptions.Item label="Gym Equipment">{this.state.equipment}</Descriptions.Item>
                     <Descriptions.Item label="Weight Goals">{this.state.list.weight_goals}</Descriptions.Item>
 
                     <Descriptions.Item label="Dietary Restrictions">

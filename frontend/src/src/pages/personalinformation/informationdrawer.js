@@ -13,6 +13,7 @@ export  default  class DrawerForm extends React.Component {
     state = {
         list: {},
         visible: false,
+        equipment:"",
         activity_level_ratio:"sedentary",
         weight_training_level_ratio: "beginner"
     };
@@ -33,6 +34,9 @@ export  default  class DrawerForm extends React.Component {
         var docRef = await db.collection("users").doc(memoryUtils.user.username);
         docRef.get().then(async (doc) => {
             if (doc.exists) {
+
+
+
                 this.setState({list: doc.data()}, () => {
                     console.log(this.state.list);
                 })
@@ -172,59 +176,10 @@ export  default  class DrawerForm extends React.Component {
                         <Form.Item name={'dietary_restrictions'} label='Dietary Restrictions' initialValue={this.state.list.dietary_restrictions}>
                             <Select defaultValue={this.state.list.dietary_restrictions} style={{ width: 150 }} >
                                 <Option value="no_restriction">No Restrictions</Option>
-                                <Option value="vegetarian_vegan">Vegetarian</Option>
+                                <Option value="vegetarian-vegan">Vegetarian</Option>
                                 <Option value="gluten_free">Gluten-free</Option>
                             </Select>
                         </Form.Item>
-
-                        <Form.Item name={'gym_equipment'} label='Gym Equipment' initialValue={this.state.list.gym_equipment}>
-                            <Select
-                                style={{ width: '100%' }}
-                                placeholder="select one country"
-                                defaultValue={this.state.list.dietary_restrictions}
-                                optionLabelProp="label"
-                            >
-
-                                <Option value="0" label="No Equipment">
-                                    <div className="no_equipment">
-                                        No equipment
-                                    </div>
-                                </Option>
-
-                                <Option value="dumbbells" label="Dumbbells">
-                                    <div className="dumbbells">
-                                        Dumbbells
-                                    </div>
-                                </Option>
-
-                                <Option value="yoga mat" label="Yoga Mat">
-                                    <div className="yoga_mat">
-                                        Yoga Mat
-                                    </div>
-                                </Option>
-
-                                <Option value="resistance bands" label="Resistance Bands">
-                                    <div className="resistance_bands">
-                                        Resistance Bands
-                                    </div>
-                                </Option>
-
-                                <Option value="pull-up bar" label="Pull-up Bar">
-                                    <div className="pull_up_bar">
-                                        Pull-up Bar
-                                    </div>
-                                </Option>
-
-                                <Option value="machines" label="Machines">
-                                    <div className="machines">
-                                        Machines
-                                    </div>
-                                </Option>
-                            </Select>
-                        </Form.Item>
-
-
-
 
                         <Form.Item name={'activity_level'} label='Activity Level' initialValue={this.state.list.activity_level_ratio}>
                             <Select style={{ width: 150 }}  defaultValue={this.state.activity_level_ratio}>
@@ -239,13 +194,97 @@ export  default  class DrawerForm extends React.Component {
 
                         <Form.Item name={'experience'} label='Experience' initialValue={this.state.list.experience}>
                             <Select defaultValue={this.state.list.experience} style={{ width: 150 }} >
-                                <Option value={"1 month"}>1 month</Option>
-                                <Option value={"6 months"}>6 months</Option>
-                                <Option value={"1 year"}>1 year</Option>
-                                <Option value={"2 year"}>2 years</Option>
+                                <Option value={0}>level 1</Option>
+                                <Option value={1}>level 2</Option>
+                                <Option value={2}>level 3</Option>
                             </Select>
                         </Form.Item>
+                        <Form.Item name={'gym_equipment'} label='Gym Equipment' initialValue={this.state.list.gym_equipment}>
+                            <Select
+                                mode="multiple"
+                                style={{ width: '100%' }}
+                                defaultValue={this.state.list.gym_equipment}
+                                optionLabelProp="label"
+                            >
 
+                                <Option value="0" label="No Equipment">
+                                    <div className="no_equipment">
+                                        No equipment
+                                    </div>
+                                </Option>
+
+                                <Option value="Chest Fly Machine" label="Chest Fly Machine">
+                                    <div className="Chest_Fly_Machine">
+                                        Chest Fly Machine
+                                    </div>
+                                </Option>
+
+                                <Option value="Dumbbells" label="Dumbbells">
+                                    <div className="Dumbbells">
+                                        Dumbbells
+                                    </div>
+                                </Option>
+
+                                <Option value="Shoulders Press Machine" label="Shoulders Press Machine">
+                                    <div className="Shoulders_Press_Machine">
+                                        Shoulders Press Machine
+                                    </div>
+                                </Option>
+
+                                <Option value="Cable Machine" label="Cable Machine">
+                                    <div className="Cable_Machine">
+                                        Cable Machine
+                                    </div>
+                                </Option>
+
+                                <Option value="Bench" label="Bench">
+                                    <div className="Bench">
+                                        Bench
+                                    </div>
+                                </Option>
+
+                                <Option value="Leg Press Machine" label="Leg Press Machine">
+                                    <div className="Leg_Press_Machine">
+                                        Leg Press Machine
+                                    </div>
+                                </Option>
+
+                                <Option value="Leg Extension Machine" label="Leg Extension Machine">
+                                    <div className="Leg_Extension_Machine">
+                                        Leg Extension Machine
+                                    </div>
+                                </Option>
+
+                                <Option value="Kettlebell OR Dumbbells" label="Kettlebell OR Dumbbells">
+                                    <div className="Kettlebell_OR_Dumbbells">
+                                        Kettlebell OR Dumbbells
+                                    </div>
+                                </Option>
+
+                                <Option value="Pullup Bar" label="Pullup Bar">
+                                    <div className="Pullup_Bar">
+                                        Pullup Bar
+                                    </div>
+                                </Option>
+
+                                <Option value="Dip Bars" label="Dip Bars">
+                                    <div className="Dip_Bars">
+                                        Dip Bars
+                                    </div>
+                                </Option>
+
+                                <Option value="Barbell" label="Barbell">
+                                    <div className="Barbell">
+                                        Barbell
+                                    </div>
+                                </Option>
+                                <Option value="Rack" label="Rack">
+                                    <div className="Rack">
+                                        Rack
+                                    </div>
+                                </Option>
+                            </Select>
+                        </Form.Item>
 
                         <Form.Item wrapperCol={{ ...layout.wrapperCol, offset: 8 }}>
                             <Button type="primary" htmlType="submit">

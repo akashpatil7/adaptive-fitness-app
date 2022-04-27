@@ -38,15 +38,15 @@ export default class lunch extends Component{
     initColumns = () =>{
         this.columns = [
             {
-                title: 'Food name',
+                title: 'Food Name',
                 dataIndex: 'name'
             },
             {
-                title: 'GRAMS',
+                title: 'Grams',
                 dataIndex: 'grams'
             },
             {
-                title: 'image',
+                title: 'Image',
                 dataIndex: 'imageurl',
                 render: (dataIndex) => <Image width={60} height={60}  src={dataIndex}></Image>,
             }
@@ -80,7 +80,8 @@ export default class lunch extends Component{
                             // "prop: " + prop + " value: " + obj[prop]
                             console.log(value.ingredients[prop]);
                             foodname = prop
-                            grams = value.ingredients[prop]
+                            let grams_float = parseFloat(value.ingredients[prop])
+                            grams =grams_float.toFixed(2)
                             var docRef = await db.collection("images").doc(prop);
                             await  docRef.get().then( async (doc) => {
                                 if (doc.exists) {

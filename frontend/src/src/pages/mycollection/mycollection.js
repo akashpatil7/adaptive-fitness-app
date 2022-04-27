@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {Card, Button, Popover, Tooltip, Image, Divider, Tag, Row, message,Alert} from 'antd';
+import {Card, Button, Popover, Tooltip, Image, Divider, Tag, Row, message,Alert,Checkbox} from 'antd';
 import {  DeleteOutlined } from '@ant-design/icons';
 import {EnvironmentTwoTone,FireTwoTone,DeploymentUnitOutlined,WarningOutlined,NodeIndexOutlined,HeartTwoTone} from '@ant-design/icons';
 import memoryUtils from "../../utils/memoryUtils";
@@ -18,71 +18,69 @@ export default class myCollection extends Component{
         this.setState({ value });
     };
 
-    /**
-     * @function：queryCollection
-     * @parameter： null
-     * @description： Query all the favorites and render the page in real time
-     */
-    queryCollection=()=>
-    {
-        var docRef = db.collection("users").doc(memoryUtils.user.username);
-
-        docRef.get().then(async (doc) => {
-            if (doc.exists) {
-                let response = await ajax('/food/getPlans', doc.data(), 'POST')
-                if (response.data)
-                {
-                    console.log(response.data);
-                    const valuelist = [];
-                    let value = response.data
-                    //Store the data in the parameters of the render page
-                    for(let id in value) {
-                        for (var prop in value[id].ingredients) {
-                            if (value[id].ingredients.hasOwnProperty(prop)) {
-                                // "prop: " + prop + " value: " + obj[prop]
-                                console.log(prop)
-                                console.log(value[id].ingredients[prop])
-
-                                var docRef = db.collection("images").doc(prop);
-
-                                docRef.get().then((doc) => {
-                                    if (doc.exists) {
-                                        let url_value = doc.data()
-
-
-                                        console.log( url_value.url);
-
-                                    } else {
-                                        // doc.data() will be undefined in this case
-                                        console.log("No such document!");
-                                    }
-                                }).catch((error) => {
-                                    console.log("Error getting document:", error);
-                                });
-
-
-                            }
-                        }
-                    }
-
-                }
-                //console.log(valuelist);
-                //this.setState({list:valuelist})
-                //console.log(this.state.list);
-            } else {
-                console.log("No such document!");
-            }
-        }).catch((error) => {
-            console.log("Error getting document:", error);
-        });
-
-        this.setState({loading:false})
-
-    }
     componentDidMount() {
-        this.queryCollection();
-
+        this.state.list.push({
+            type:"Back",
+            imageurl:"https://firebasestorage.googleapis.com/v0/b/blackbird-545eb.appspot.com/o/workout%2FCrunch.gif?alt=media&token=1fac50fe-43f6-45bc-b970-18001adf3c5c",
+            ExerciseName:"Glute Bridge",
+            RepRange:"4,10",
+            Rest:"1",
+            StartingReps:"5",
+            StartingSets:"3",
+            StartingWeight:"NA",
+            WeightIncrement:"NA"
+        }
+        )
+        this.state.list.push({
+                type:"Chest",
+                imageurl:"https://firebasestorage.googleapis.com/v0/b/blackbird-545eb.appspot.com/o/workout%2FHollow-body%20Holds.gif?alt=media&token=39a08c5b-e2a6-4e38-9db7-dfa942812ebd",
+                ExerciseName:"Hollow-body Holds",
+                RepRange:"4,10",
+                Rest:"1",
+                StartingReps:"5",
+                StartingSets:"3",
+                StartingWeight:"NA",
+                WeightIncrement:"NA"
+            }
+        )
+        this.state.list.push({
+                type:"Core",
+                imageurl:"https://firebasestorage.googleapis.com/v0/b/blackbird-545eb.appspot.com/o/workout%2FKneeling%20Pushups.gif?alt=media&token=c194c180-43f1-422a-8d36-89af967f6989",
+                ExerciseName:"Kneeling Pushups",
+                RepRange:"4,10",
+                Rest:"1",
+                StartingReps:"5",
+                StartingSets:"3",
+                StartingWeight:"NA",
+                WeightIncrement:"NA"
+            }
+        )
+        this.state.list.push({
+                type:"Legs",
+                imageurl:"https://firebasestorage.googleapis.com/v0/b/blackbird-545eb.appspot.com/o/workout%2FLeg%20Extension.gif?alt=media&token=bfed5692-eecb-4eb1-bca7-7a263e80bdc3",
+                ExerciseName:"Leg Extension",
+                RepRange:"4,10",
+                Rest:"1",
+                StartingReps:"5",
+                StartingSets:"3",
+                StartingWeight:"NA",
+                WeightIncrement:"NA"
+            }
+        )
+        this.state.list.push({
+                type:"Shoulders/Arms",
+                imageurl:"https://firebasestorage.googleapis.com/v0/b/blackbird-545eb.appspot.com/o/workout%2FSeated-Curls.gif?alt=media&token=83225dc7-8bd3-4921-9e84-4ffac01eb14d",
+                ExerciseName:"Seated-Curls",
+                RepRange:"4,10",
+                Rest:"1",
+                StartingReps:"5",
+                StartingSets:"3",
+                StartingWeight:"NA",
+                WeightIncrement:"NA"
+            }
+        )
     }
+
     /**
      * @function：DeleteCollection
      * @parameter： user information
@@ -95,7 +93,10 @@ export default class myCollection extends Component{
         message.success("Delete success!:"+user.name)
         this.setState({loading:false})
     }
+    onChange = (v)=>
+    {
 
+    }
     render() {
         const { value,list } = this.state;
 
@@ -110,7 +111,7 @@ export default class myCollection extends Component{
                         />}
                     className="box">
 
-                    <Meta title={card.name} >
+                    <Meta title={card.ExerciseName} >
 
                     </Meta>
                     <Divider />
@@ -118,33 +119,40 @@ export default class myCollection extends Component{
                         message=""
                         description={card.type}
                         type="info"
-                        showIcon
                     />
+
                     <Divider />
                     <Tag color="red" icon={< FireTwoTone  ></FireTwoTone>} color="red">
-                        Calories:{card.calories}
+                        Starting Reps :{card.StartingReps}
                     </Tag>
+
                     <Divider type="vertical" />
                     <Tag icon={ <WarningOutlined />} color="orange">
-                        Fat:{card.fat}
+                        Starting Sets:{card.StartingSets}
                     </Tag>
-                    <Divider type="vertical" />
 
+
+                    <Divider type="vertical" />
                     <Tag icon={< DeploymentUnitOutlined  ></DeploymentUnitOutlined>} color="orange">
-                        Sugar:{card.carbohydrates}
+                        Starting Reps :    {card.StartingReps}
+                    </Tag>
+
+                    <Divider type="vertical" />
+                    <Tag icon={< DeploymentUnitOutlined  ></DeploymentUnitOutlined>} color="orange">
+                        Starting Weight :    {card.StartingWeight}
                     </Tag>
                     <Divider type="vertical" />
-                    <Tag icon={<NodeIndexOutlined />} color="green">
-                        Fiber:{card.fiber}
+                    <Tag icon={<NodeIndexOutlined />} color="orange">
+                        WeightIncrement :{card.WeightIncrement}
                     </Tag>
                     <Divider type="vertical" />
                     <Tag icon={<HeartTwoTone twoToneColor="#eb2f96"/>} color="green">
-                        Protein:{card.protein}
+                        Rest :{card.Rest}
                     </Tag>
 
                     <Divider/>
+                    <Checkbox onChange={this.onChange}>Finished</Checkbox>
 
-                    <Button type="primary" shape="round"  icon={<DeleteOutlined />} onClick={()=>this.DeleteCollection(card)}/>
                 </Card>
             )
         }
