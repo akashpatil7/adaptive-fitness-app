@@ -96,13 +96,14 @@ def updateWorkoutHistory():
         
         for body_part in body_parts:
             
+            # gets all body part exercise ids from recommendation list
+            exercises = recommendations[body_part]['Id']
+            print(body_part + " exercises: ", exercises)
+            
+            # get inidex of latest excercise performed from list of all execises
+            workout_index = exercises.index(history[body_part])
+            
             if request_body[body_part]:
-                # gets all body part exercise ids from recommendation list
-                exercises = recommendations[body_part]['Id']
-                print(body_part + " exercises: ", exercises)
-                
-                # get inidex of latest excercise performed from list of all execises
-                workout_index = exercises.index(history[body_part])
                 
                 # get next workout from list by adding to previous index
                 new_exercise_index = (workout_index + 1) % len(exercises)
@@ -119,9 +120,7 @@ def updateWorkoutHistory():
                 
             else:
                 print("They didn't do the " + body_part + " exercise")
-                exercises = recommendations[body_part]['Id']
-                workout_index = exercises.index(history[body_part])
-                
+                # keep recommendation the same as last time
                 new_recommendations[body_part]["Id"] = recommendations[body_part]["Id"][workout_index]
                 new_recommendations[body_part]["Name"] = recommendations[body_part]["Name"][workout_index]
                 new_recommendations[body_part]["Sets"] = recommendations[body_part]["Sets"][workout_index]
@@ -132,9 +131,8 @@ def updateWorkoutHistory():
     else:
         print(u'User does not have a history or recommendations list!')
         
-    print(new_recommendations)
     
-    returnData = {}
+    returnData = new_recommendations
     response = app.response_class(
         response=json.dumps(returnData),
         status=200,
