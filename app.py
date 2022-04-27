@@ -55,7 +55,91 @@ def enterWorkoutQuestionaireForm():
         mimetype='application/json'
     )
     return response
+    
+    
+@app.route('/workouts/makeRecommendations', methods=['POST'])
+def updateWorkoutHistory():
+    '''
+        Example POST request in Postman:
+        
+        url: http://127.0.0.1:5000/workouts/makeRecommendations
+        
+        body (raw, JSON): {
+                            {
+                                "email": "test@test.com",
+                                "core" : true,
+                                "chest" : false,
+                                "legs" : false,
+                                "shoulders" : true,
+                                "back" : false
+                                }
+                            }
+    '''
 
+    request_body = request.json
+    
+    id = request_body['email']
+    
+    # Get current recommendations list and last recorded exercises
+    recommendations = current_recommendations.document(id).get()
+    history = workout_history.document(id).get()
+    
+    if history.exists and recommendations.exists:
+        history = history.to_dict()
+        recommendations = recommendations.to_dict()
+        body_parts = ['core', 'back', 'chest', 'legs', 'shoulders']
+        
+        new_recommendations = {'core':{},
+                                'back': {},
+                                'chest': {},
+                                'legs': {}, 
+                                'shoulders': {}}
+        
+        for body_part in body_parts:
+            
+            # gets all body part exercise ids from recommendation list
+            exercises = recommendations[body_part]['Id']
+            print(body_part + " exercises: ", exercises)
+            
+            # get inidex of latest excercise performed from list of all execises
+            workout_index = exercises.index(history[body_part])
+            
+            if request_body[body_part]:
+                
+                # get next workout from list by adding to previous index
+                new_exercise_index = (workout_index + 1) % len(exercises)
+                
+                # get next workout recommendations
+                new_recommendations[body_part]["Id"] = recommendations[body_part]["Id"][new_exercise_index]
+                new_recommendations[body_part]["Name"] = recommendations[body_part]["Name"][new_exercise_index]
+                new_recommendations[body_part]["Sets"] = recommendations[body_part]["Sets"][new_exercise_index]
+                new_recommendations[body_part]["Reps"] = recommendations[body_part]["Reps"][new_exercise_index]
+                new_recommendations[body_part]["Weight"] = recommendations[body_part]["Weight"][new_exercise_index]
+                
+                # update history with new workouts 'currently doing'
+                workout_history.document(id).update({body_part: new_recommendations[body_part]["Id"]})
+                
+            else:
+                print("They didn't do the " + body_part + " exercise")
+                # keep recommendation the same as last time
+                new_recommendations[body_part]["Id"] = recommendations[body_part]["Id"][workout_index]
+                new_recommendations[body_part]["Name"] = recommendations[body_part]["Name"][workout_index]
+                new_recommendations[body_part]["Sets"] = recommendations[body_part]["Sets"][workout_index]
+                new_recommendations[body_part]["Reps"] = recommendations[body_part]["Reps"][workout_index]
+                new_recommendations[body_part]["Weight"] = recommendations[body_part]["Weight"][workout_index]
+        
+        
+    else:
+        print(u'User does not have a history or recommendations list!')
+        
+    
+    returnData = new_recommendations
+    response = app.response_class(
+        response=json.dumps(returnData),
+        status=200,
+        mimetype='application/json'
+    )
+    return response
 
 # Get initial workout plans for user 
 def getInitialWorkoutPlansForUser(data):
