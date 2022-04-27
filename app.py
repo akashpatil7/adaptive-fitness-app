@@ -11,9 +11,9 @@ db = firestore.client()
 explicit_data = db.collection('explicit-info')
 exercise_plans_data = db.collection('exercise_plan')
 food_plans_data = db.collection('food_plan')
-user_data = db.collection('users')
 current_recommendations = db.collection('current_recommendations')
-last_workout = db.collection('last_workout')
+workout_history = db.collection('last_workout')
+user_data = db.collection('users')
 
 app = Flask(__name__)
 
@@ -42,10 +42,9 @@ def enterQuestionaireForm():
     
 @app.route('/workouts/getPlans', methods=['POST'])
 def enterWorkoutQuestionaireForm():
-    id = request.json['email']
-
     request_body = request.json
-    #explicit_data.document(id).set(request.json)
+
+    id = request_body['email']
 
     #Get initial workout plan
     workoutData = getInitialWorkoutPlansForUser(request_body)
@@ -57,9 +56,6 @@ def enterWorkoutQuestionaireForm():
     )
     return response
 
-#Show workout plans for user
-
-#Show diet plans for user
 
 # Get initial workout plans for user 
 def getInitialWorkoutPlansForUser(data):
@@ -120,13 +116,20 @@ def getInitialWorkoutPlansForUser(data):
     current_recommendations.document(id).set(exercises)
 
     final_list_of_workouts = {}
+    final_ids_of_workouts = {}
     for key, value in exercises.items():
-        final_list_of_workouts[key] = value["Id"][0]
+        final_ids_of_workouts[key] = value["Id"][0]
+        body_part = {}
+        for item, arrays in value.items():
+            body_part[item] = arrays[0]
+        final_list_of_workouts[key] = body_part
+    print(final_list_of_workouts)
 
+    print(final_ids_of_workouts)
     #user_data.document(id).collection("last_workout").add(final_list_of_workouts)
-    last_workout.document(id).set(final_list_of_workouts)
+    workout_history.document(id).set(final_ids_of_workouts)
 
-    return exercises
+    return final_list_of_workouts
 
 
 # Recursive function to get exercises according to level and equipment     
