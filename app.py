@@ -307,12 +307,14 @@ def getInitialPlansForUser(data):
         extra_calories_needed_per_meal = (bmr - total_cals_in_plans)/3
         new_plan = plans_by_diet_restrictions
         for meal in new_plan:
+            portion_size = None
             for ingredient, val in meal["ingredients"].items():
                 new_portion = int(val) * (extra_calories_needed_per_meal / total_cals_per_meal[meal['meal_id']])
+                portion_size = new_portion
                 meal["ingredients"][ingredient] = int(val) + new_portion
-                #val += int(val) * (extra_calories_needed_per_meal / total_cals_per_meal[meal['meal_id']])
-        #data["current_food_plan"] = new_plan
-        #explicit_data.document(id).set(data)
+            for nutrition, val in meal["nutrition"].items():
+                meal["nutrition"][nutrition] = int(val) + portion_size
+
         return new_plan
 
 if __name__ == "__main__":
