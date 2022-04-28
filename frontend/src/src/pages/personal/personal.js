@@ -121,8 +121,7 @@ const { SubMenu } = Menu;
 
                         <SubMenu key="sub1" icon={<UserOutlined />} title={user} >
                             <Menu.Item key="3"> <Link to ='/personal/personalinformation'>Personal information</Link></Menu.Item>
-                            <Menu.Item key="4"> <Link to ='/personal/mycollection'>Collection</Link></Menu.Item>
-                            <Menu.Item key="5"> <Link to ='/personal/addfoodcard'>Customized Food Card</Link></Menu.Item>
+
                         </SubMenu>
                         <Menu.Item key="2" icon={<CalendarOutlined />}>
                            <Link to ='/personal/plan'>Diet Plans</Link>
@@ -131,12 +130,6 @@ const { SubMenu } = Menu;
                             <Link to ='/personal/mycollection'>Workouts Plans</Link>
                         </Menu.Item>
 
-                        <Menu.Item key="9" icon={<SearchOutlined />}>
-                            <Link to ='/personal/search'>Search</Link>
-                        </Menu.Item>
-                        <Menu.Item key="13" icon={<CommentOutlined />}>
-                            <Link to ='/personal/comments'>Comment</Link>
-                        </Menu.Item>
                     </Menu>
                 </Sider>
                 {/*Log out button*/}
