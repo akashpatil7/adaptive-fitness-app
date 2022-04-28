@@ -6,13 +6,13 @@ import {message} from "antd";
 * ajax
 * */
 
-
 export default function ajax(url,data={},type='GET'){
-
+    const h = "http://localhost:3000";
+    url = h+url;
+    console.log("curretn url : "+ url);
     const axiosInstance =  axios.create({
         timeout: 8000,
         headers: {
-            'Authorization': memoryUtils.userToken,
             'Content-Type': 'application/json'
         }
     });
@@ -20,9 +20,25 @@ export default function ajax(url,data={},type='GET'){
         let promise
         if(type === 'GET'){
             promise = axiosInstance.get(url, {params:data})//query parameter
-        }else{
-            console.log("Send back-end : "+ url);
+            console.log("GET:" + promise);
+        }
+        else if(type == 'POST')
+        {
+            console.log("POST back-end : "+ url);
             promise = axiosInstance.post(url,data)
+        }
+        else if(type == 'DELETE')
+        {
+            console.log("DELETE back-end : "+ url);
+            promise = axiosInstance.delete(url,data)
+        }else if(type == 'PATCH'){
+            console.log("PATCH : "+ url);
+            promise = axiosInstance.patch(url,data)
+        }
+        else
+        {
+            console.log("PUT back-end : "+ url);
+            promise = axiosInstance.put(url,data)
         }
         promise.then(response =>{
             // if success
