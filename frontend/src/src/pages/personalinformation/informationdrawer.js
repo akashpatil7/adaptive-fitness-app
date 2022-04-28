@@ -207,7 +207,7 @@ export  default  class DrawerForm extends React.Component {
                                 optionLabelProp="label"
                             >
 
-                                <Option value="0" label="No Equipment">
+                                <Option value="NA" label="No Equipment">
                                     <div className="no_equipment">
                                         No equipment
                                     </div>

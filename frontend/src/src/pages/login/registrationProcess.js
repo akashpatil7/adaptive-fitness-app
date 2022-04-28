@@ -222,21 +222,21 @@ class  RegistrationForm extends Component{
                 <Form.Item name={'dietary_restrictions'} label='Dietary Restrictions' initialValue={"no_restriction"}>
                     <Select defaultValue="no_restriction" style={{ width: 150 }} onChange={dietary_restrictions}>
                         <Option value="no_restriction">No Restrictions</Option>
-                        <Option value="vegetarian_vegan">Vegetarian</Option>
+                        <Option value="vegetarian-vegan">Vegetarian</Option>
                         <Option value="gluten_free">Gluten-free</Option>
                     </Select>
                 </Form.Item>
 
-            <Form.Item name={'gym_equipment'} label='Gym Equipment' initialValue={"0"}>
+            <Form.Item name={'gym_equipment'} label='Gym Equipment' initialValue={"NA"}>
                 <Select
                     mode="multiple"
                     style={{ width: '100%' }}
-                    defaultValue="0"
+                    defaultValue="NA"
                     onChange={gym_equipment}
                     optionLabelProp="label"
                 >
 
-                    <Option value="0" label="No Equipment">
+                    <Option value="NA" label="No Equipment">
                         <div className="no_equipment">
                             No equipment
                         </div>
