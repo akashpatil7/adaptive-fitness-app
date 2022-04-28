@@ -31,6 +31,7 @@ import PersonalInformation from "../personalinformation/personalinformation"
 import myCollection from "../mycollection/mycollection";
 import Plan from "../plan/plan";
 import addFoodcard from "../addfoodcard/addfoodcard";
+import exercisePlan from "../exerciseplan/exercisePlan";
 
 const { confirm } = Modal;
 const { Header, Content, Footer, Sider } = Layout;
@@ -120,21 +121,15 @@ const { SubMenu } = Menu;
 
                         <SubMenu key="sub1" icon={<UserOutlined />} title={user} >
                             <Menu.Item key="3"> <Link to ='/personal/personalinformation'>Personal information</Link></Menu.Item>
-                            <Menu.Item key="4"> <Link to ='/personal/mycollection'>Collection</Link></Menu.Item>
-                            <Menu.Item key="5"> <Link to ='/personal/addfoodcard'>Diet Plans</Link></Menu.Item>
-                            <Menu.Item key="6"> <Link to ='/personal/addfoodcard'>Exercise plans</Link></Menu.Item>
+
                         </SubMenu>
                         <Menu.Item key="2" icon={<CalendarOutlined />}>
-                           <Link to ='/personal/plan'>Plan</Link>
+                           <Link to ='/personal/plan'>Diet Plans</Link>
+                        </Menu.Item>
+                        <Menu.Item key="23" icon={<CalendarOutlined />}>
+                            <Link to ='/personal/mycollection'>Workouts Plans</Link>
                         </Menu.Item>
 
-
-                        <Menu.Item key="9" icon={<SearchOutlined />}>
-                            <Link to ='/personal/search'>Search</Link>
-                        </Menu.Item>
-                        <Menu.Item key="13" icon={<CommentOutlined />}>
-                            <Link to ='/personal/comments'>Comment</Link>
-                        </Menu.Item>
                     </Menu>
                 </Sider>
                 {/*Log out button*/}
@@ -156,6 +151,7 @@ const { SubMenu } = Menu;
                                 <Route path='/personal/personalinformation' component={PersonalInformation}/>
                                 <Route path='/personal/about' component={About}/>
                                 <Route path='/personal/plan' component={Plan}/>
+                                <Route path='/personal/mycollection' component={exercisePlan}/>
                                 <Route path='/personal/addfoodcard' component={addFoodcard}/>
                                 <Route path='/personal/search' component={PlantListComponent}/>
                                 <Route path='/personal/comments' component={Comments}></Route>
