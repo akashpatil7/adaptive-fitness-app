@@ -309,11 +309,11 @@ def getInitialPlansForUser(data):
         for meal in new_plan:
             portion_size = None
             for ingredient, val in meal["ingredients"].items():
-                new_portion = int(val) * (extra_calories_needed_per_meal / total_cals_per_meal[meal['meal_id']])
+                new_portion = (extra_calories_needed_per_meal / total_cals_per_meal[meal['meal_id']])
                 portion_size = new_portion
-                meal["ingredients"][ingredient] = int(val) + new_portion
+                meal["ingredients"][ingredient] = int(val) + int(val) * new_portion
             for nutrition, val in meal["nutrition"].items():
-                meal["nutrition"][nutrition] = int(val) + portion_size
+                meal["nutrition"][nutrition] = int(val) + int(val) * portion_size
 
         return new_plan
 
