@@ -166,7 +166,7 @@ class  Demo extends Component{
                         Login
                     </Button>
                     <DrawerForm/>
-                    <Button onClick={this.showConfirm} type="dashed">forget password</Button>
+
                 </Form.Item>
 
             </Form>

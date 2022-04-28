@@ -22,6 +22,10 @@ export default class myCollection extends Component{
     handleChange = value => {
         this.setState({ value });
     };
+
+
+
+
     makeRecommendations =async () => {
         let send_data = {
                 "email": memoryUtils.user.username,
@@ -159,7 +163,7 @@ export default class myCollection extends Component{
                     <Divider />
                     <Alert
                         message=""
-                        description={card.type}
+                        description={card.type.slice(0,1).toUpperCase() +card.type.slice(1).toLowerCase()}
                         type="info"
                     />
 
