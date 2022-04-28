@@ -64,7 +64,7 @@ export default class breakfast extends Component{
             if (doc.exists) {
                 let response = await ajax('/food/getPlans', doc.data(), 'POST')
                 if (response.data) {
-
+                    console.log("/food/getPlans response",response.data)
                     let value = response.data[0]
                     let nutrition = value.nutrition
                     console.log(value)

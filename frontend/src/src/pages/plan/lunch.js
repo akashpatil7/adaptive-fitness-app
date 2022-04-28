@@ -66,6 +66,7 @@ export default class lunch extends Component{
                 if (response.data) {
 
                     let value = response.data[1]
+                    console.log("/food/getPlans response_lunch",response.data[1])
                     let nutrition = value.nutrition
                     console.log(value)
                     this.setState({cal: nutrition.cal})

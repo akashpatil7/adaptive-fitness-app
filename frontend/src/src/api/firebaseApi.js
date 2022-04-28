@@ -76,7 +76,7 @@ export async function register(username, password,v) {
             "email":v.email,
             "experience":v.experience,
             "gender": v.gender,
-            "activity_level": v.activity_level,
+            "activity_level_ratio": v.activity_level,
             "dietary_restrictions": v.dietary_restrictions,
             "gym_equipment":v.gym_equipment,
             "weight_goals":v.weight_goals,

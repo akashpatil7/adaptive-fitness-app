@@ -157,7 +157,7 @@ export default class myCollection extends Component{
                         />}
                     className="box">
 
-                    <Meta title={card.ExerciseName + "-" +card.Id} >
+                    <Meta title={card.ExerciseName } >
 
                     </Meta>
                     <Divider />
