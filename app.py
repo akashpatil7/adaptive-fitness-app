@@ -3,6 +3,9 @@ import firebase_admin
 from flask import Flask, make_response
 from flask import json, request, jsonify
 from firebase_admin import credentials, firestore
+from flask import Flask
+from flask_cors import CORS, cross_origin
+
 
 cred = credentials.Certificate("blackbird-545eb-firebase-adminsdk-mbj63-6dffc14bc3.json")
 firebase_admin.initialize_app(cred)
@@ -16,12 +19,16 @@ workout_history = db.collection('last_workout')
 user_data = db.collection('users')
 
 app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
 @app.route("/")
+@cross_origin()
 def hello_world():
     return make_response("Hello world", 200)
 
 @app.route('/food/getPlans', methods=['POST'])
+@cross_origin()
 def enterQuestionaireForm():
     id = request.json['email']
 
@@ -41,6 +48,7 @@ def enterQuestionaireForm():
     
     
 @app.route('/workouts/getPlans', methods=['POST'])
+@cross_origin()
 def enterWorkoutQuestionaireForm():
     request_body = request.json
 
@@ -58,6 +66,7 @@ def enterWorkoutQuestionaireForm():
     
     
 @app.route('/workouts/makeRecommendations', methods=['POST'])
+@cross_origin()
 def updateWorkoutHistory():
     '''
         Example POST request in Postman:
